@@ -1,8 +1,0 @@
-factor,mediator,seg,deaths
-Fibre (low),Direct,Not transmitted through a GLP-1 target,38.73791294052119
-Fruits (low),Direct,Not transmitted through a GLP-1 target,211.68163352547745
-Other factors,Direct,Not transmitted through a GLP-1 target,0.0
-Other factors,FPG,"Transmitted through a GLP-1 target, offset by 50% coverage",1.3216632388256702
-Other factors,SBP,"Transmitted through a GLP-1 target, offset by 50% coverage",5.77853759557241
-Sodium (high),SBP,"Transmitted through a GLP-1 target, offset by 50% coverage",264.52967812019665
-Vegetables (low),Direct,Not transmitted through a GLP-1 target,14.028738715727895
