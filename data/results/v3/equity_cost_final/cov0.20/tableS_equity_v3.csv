@@ -1,0 +1,172 @@
+Price scenario,ISO3,Education group,Population share (25+),PAF ratio,Affordable fraction,Dietary policy averted (thousands),GLP-1RA averted if affordable to all (thousands),GLP-1RA averted (thousands),Diet-to-treatment ratio
+Branded,AUS,Low education,0.035,1.04,0.0,5.29,3.84,0.0,
+Branded,AUS,Medium education,0.374,1.04,0.559,10.78,9.06,5.07,2.13
+Branded,AUS,High education,0.591,0.97,1.0,6.48,6.13,6.13,1.06
+Branded,BGD,Low education,0.67,1.01,0.0,189.12,28.0,0.0,
+Branded,BGD,Medium education,0.275,0.98,0.0,27.55,4.83,0.0,
+Branded,BGD,High education,0.055,0.94,0.0,5.16,0.98,0.0,
+Branded,BGR,Low education,0.05,1.09,0.0,2.09,0.36,0.0,
+Branded,BGR,Medium education,0.516,1.0,0.0,10.63,3.84,0.0,
+Branded,BGR,High education,0.434,0.99,0.461,5.86,2.34,1.08,5.43
+Branded,BRA,Low education,0.359,1.11,0.0,138.31,101.29,0.0,
+Branded,BRA,Medium education,0.407,1.0,0.0,37.99,32.21,0.0,
+Branded,BRA,High education,0.234,0.83,0.0,22.26,23.06,0.0,
+Branded,CAN,Low education,0.032,1.07,0.0,5.16,3.98,0.0,
+Branded,CAN,Medium education,0.191,1.06,0.0,10.25,8.5,0.0,
+Branded,CAN,High education,0.777,0.98,0.772,17.82,17.2,13.28,1.34
+Branded,CHN,Low education,0.225,1.04,0.0,2032.27,312.61,0.0,
+Branded,CHN,Medium education,0.52,1.01,0.0,661.01,137.19,0.0,
+Branded,CHN,High education,0.255,0.94,0.785,178.18,36.87,28.96,6.15
+Branded,DEU,Low education,0.022,1.05,0.0,2.57,2.26,0.0,
+Branded,DEU,Medium education,0.448,1.04,0.604,53.94,48.28,29.16,1.85
+Branded,DEU,High education,0.529,0.96,1.0,25.48,25.6,25.6,1.0
+Branded,EGY,Low education,0.345,1.03,0.0,43.76,100.3,0.0,
+Branded,EGY,Medium education,0.299,1.0,0.0,8.97,25.51,0.0,
+Branded,EGY,High education,0.356,0.98,0.0,13.26,37.88,0.0,
+Branded,GBR,Low education,0.0,1.03,0.0,0.01,0.01,0.0,
+Branded,GBR,Medium education,0.46,1.04,0.131,38.89,40.33,5.29,7.35
+Branded,GBR,High education,0.54,0.97,1.0,19.06,22.01,22.01,0.87
+Branded,IND,Low education,0.542,1.03,0.0,935.3,220.5,0.0,
+Branded,IND,Medium education,0.33,0.98,0.0,196.03,55.48,0.0,
+Branded,IND,High education,0.128,0.93,0.0,64.55,19.54,0.0,
+Branded,ISR,Low education,0.117,1.05,0.0,1.55,1.39,0.0,
+Branded,ISR,Medium education,0.243,1.03,0.0,0.93,0.87,0.0,
+Branded,ISR,High education,0.64,0.98,0.937,2.43,2.49,2.33,1.04
+Branded,JPN,Low education,0.022,1.05,0.0,15.17,3.04,0.0,
+Branded,JPN,Medium education,0.574,1.02,0.0,94.2,23.32,0.0,
+Branded,JPN,High education,0.404,0.97,0.989,14.89,4.57,4.52,3.3
+Branded,MEX,Low education,0.287,1.12,0.0,43.7,82.65,0.0,
+Branded,MEX,Medium education,0.4,1.01,0.0,8.0,21.24,0.0,
+Branded,MEX,High education,0.313,0.88,0.0,6.57,19.99,0.0,
+Branded,NGA,Low education,0.548,1.04,0.0,15.91,39.59,0.0,
+Branded,NGA,Medium education,0.305,0.98,0.0,1.54,4.65,0.0,
+Branded,NGA,High education,0.147,0.89,0.0,0.96,3.14,0.0,
+Branded,NZL,Low education,0.065,1.04,0.0,1.13,1.14,0.0,
+Branded,NZL,Medium education,0.299,1.04,0.0,1.54,1.68,0.0,
+Branded,NZL,High education,0.637,0.98,0.628,2.12,2.51,1.58,1.34
+Branded,ROU,Low education,0.073,1.11,0.0,16.25,2.12,0.0,
+Branded,ROU,Medium education,0.543,0.99,0.0,23.78,7.48,0.0,
+Branded,ROU,High education,0.384,0.99,0.52,10.49,3.76,1.96,5.36
+Branded,TUR,Low education,0.361,1.02,0.0,48.59,84.08,0.0,
+Branded,TUR,Medium education,0.431,0.99,0.0,7.81,15.19,0.0,
+Branded,TUR,High education,0.208,0.97,0.962,3.18,6.58,6.33,0.5
+Branded,USA,Low education,0.034,1.05,0.0,31.44,31.0,0.0,
+Branded,USA,Medium education,0.404,1.05,0.0,194.49,203.9,0.0,
+Branded,USA,High education,0.561,0.96,0.356,153.71,183.81,65.49,2.35
+Branded,ZAF,Low education,0.254,1.03,0.0,1.88,20.7,0.0,
+Branded,ZAF,Medium education,0.588,1.0,0.0,0.88,9.83,0.0,
+Branded,ZAF,High education,0.158,0.95,0.0,0.33,3.93,0.0,
+Generic $140/yr,AUS,Low education,0.035,1.04,1.0,5.29,3.84,3.84,1.38
+Generic $140/yr,AUS,Medium education,0.374,1.04,1.0,10.78,9.06,9.06,1.19
+Generic $140/yr,AUS,High education,0.591,0.97,1.0,6.48,6.13,6.13,1.06
+Generic $140/yr,BGD,Low education,0.67,1.01,0.702,189.12,28.0,19.64,9.63
+Generic $140/yr,BGD,Medium education,0.275,0.98,1.0,27.55,4.83,4.83,5.71
+Generic $140/yr,BGD,High education,0.055,0.94,1.0,5.16,0.98,0.98,5.26
+Generic $140/yr,BGR,Low education,0.05,1.09,1.0,2.09,0.36,0.36,5.82
+Generic $140/yr,BGR,Medium education,0.516,1.0,1.0,10.63,3.84,3.84,2.77
+Generic $140/yr,BGR,High education,0.434,0.99,1.0,5.86,2.34,2.34,2.5
+Generic $140/yr,BRA,Low education,0.359,1.11,1.0,138.31,101.29,101.29,1.37
+Generic $140/yr,BRA,Medium education,0.407,1.0,1.0,37.99,32.21,32.21,1.18
+Generic $140/yr,BRA,High education,0.234,0.83,1.0,22.26,23.06,23.06,0.97
+Generic $140/yr,CAN,Low education,0.032,1.07,1.0,5.16,3.98,3.98,1.3
+Generic $140/yr,CAN,Medium education,0.191,1.06,1.0,10.25,8.5,8.5,1.2
+Generic $140/yr,CAN,High education,0.777,0.98,1.0,17.82,17.2,17.2,1.04
+Generic $140/yr,CHN,Low education,0.225,1.04,1.0,2032.27,312.61,312.61,6.5
+Generic $140/yr,CHN,Medium education,0.52,1.01,1.0,661.01,137.19,137.19,4.82
+Generic $140/yr,CHN,High education,0.255,0.94,1.0,178.18,36.87,36.87,4.83
+Generic $140/yr,DEU,Low education,0.022,1.05,1.0,2.57,2.26,2.26,1.13
+Generic $140/yr,DEU,Medium education,0.448,1.04,1.0,53.94,48.28,48.28,1.12
+Generic $140/yr,DEU,High education,0.529,0.96,1.0,25.48,25.6,25.6,1.0
+Generic $140/yr,EGY,Low education,0.345,1.03,1.0,43.76,100.3,100.3,0.44
+Generic $140/yr,EGY,Medium education,0.299,1.0,1.0,8.97,25.51,25.51,0.35
+Generic $140/yr,EGY,High education,0.356,0.98,1.0,13.26,37.88,37.88,0.35
+Generic $140/yr,GBR,Low education,0.0,1.03,1.0,0.01,0.01,0.01,0.84
+Generic $140/yr,GBR,Medium education,0.46,1.04,1.0,38.89,40.33,40.33,0.96
+Generic $140/yr,GBR,High education,0.54,0.97,1.0,19.06,22.01,22.01,0.87
+Generic $140/yr,IND,Low education,0.542,1.03,1.0,935.3,220.5,220.5,4.24
+Generic $140/yr,IND,Medium education,0.33,0.98,1.0,196.03,55.48,55.48,3.53
+Generic $140/yr,IND,High education,0.128,0.93,1.0,64.55,19.54,19.54,3.3
+Generic $140/yr,ISR,Low education,0.117,1.05,1.0,1.55,1.39,1.39,1.11
+Generic $140/yr,ISR,Medium education,0.243,1.03,1.0,0.93,0.87,0.87,1.06
+Generic $140/yr,ISR,High education,0.64,0.98,1.0,2.43,2.49,2.49,0.98
+Generic $140/yr,JPN,Low education,0.022,1.05,1.0,15.17,3.04,3.04,4.99
+Generic $140/yr,JPN,Medium education,0.574,1.02,1.0,94.2,23.32,23.32,4.04
+Generic $140/yr,JPN,High education,0.404,0.97,1.0,14.89,4.57,4.57,3.26
+Generic $140/yr,MEX,Low education,0.287,1.12,1.0,43.7,82.65,82.65,0.53
+Generic $140/yr,MEX,Medium education,0.4,1.01,1.0,8.0,21.24,21.24,0.38
+Generic $140/yr,MEX,High education,0.313,0.88,1.0,6.57,19.99,19.99,0.33
+Generic $140/yr,NGA,Low education,0.548,1.04,0.0,15.91,39.59,0.0,
+Generic $140/yr,NGA,Medium education,0.305,0.98,0.83,1.54,4.65,3.86,0.4
+Generic $140/yr,NGA,High education,0.147,0.89,1.0,0.96,3.14,3.14,0.31
+Generic $140/yr,NZL,Low education,0.065,1.04,1.0,1.13,1.14,1.14,0.99
+Generic $140/yr,NZL,Medium education,0.299,1.04,1.0,1.54,1.68,1.68,0.92
+Generic $140/yr,NZL,High education,0.637,0.98,1.0,2.12,2.51,2.51,0.84
+Generic $140/yr,ROU,Low education,0.073,1.11,1.0,16.25,2.12,2.12,7.67
+Generic $140/yr,ROU,Medium education,0.543,0.99,1.0,23.78,7.48,7.48,3.18
+Generic $140/yr,ROU,High education,0.384,0.99,1.0,10.49,3.76,3.76,2.79
+Generic $140/yr,TUR,Low education,0.361,1.02,1.0,48.59,84.08,84.08,0.58
+Generic $140/yr,TUR,Medium education,0.431,0.99,1.0,7.81,15.19,15.19,0.51
+Generic $140/yr,TUR,High education,0.208,0.97,1.0,3.18,6.58,6.58,0.48
+Generic $140/yr,USA,Low education,0.034,1.05,1.0,31.44,31.0,31.0,1.01
+Generic $140/yr,USA,Medium education,0.404,1.05,1.0,194.49,203.9,203.9,0.95
+Generic $140/yr,USA,High education,0.561,0.96,1.0,153.71,183.81,183.81,0.84
+Generic $140/yr,ZAF,Low education,0.254,1.03,0.213,1.88,20.7,4.4,0.43
+Generic $140/yr,ZAF,Medium education,0.588,1.0,1.0,0.88,9.83,9.83,0.09
+Generic $140/yr,ZAF,High education,0.158,0.95,1.0,0.33,3.93,3.93,0.08
+Generic $28/yr,AUS,Low education,0.035,1.04,1.0,5.29,3.84,3.84,1.38
+Generic $28/yr,AUS,Medium education,0.374,1.04,1.0,10.78,9.06,9.06,1.19
+Generic $28/yr,AUS,High education,0.591,0.97,1.0,6.48,6.13,6.13,1.06
+Generic $28/yr,BGD,Low education,0.67,1.01,1.0,189.12,28.0,28.0,6.75
+Generic $28/yr,BGD,Medium education,0.275,0.98,1.0,27.55,4.83,4.83,5.71
+Generic $28/yr,BGD,High education,0.055,0.94,1.0,5.16,0.98,0.98,5.26
+Generic $28/yr,BGR,Low education,0.05,1.09,1.0,2.09,0.36,0.36,5.82
+Generic $28/yr,BGR,Medium education,0.516,1.0,1.0,10.63,3.84,3.84,2.77
+Generic $28/yr,BGR,High education,0.434,0.99,1.0,5.86,2.34,2.34,2.5
+Generic $28/yr,BRA,Low education,0.359,1.11,1.0,138.31,101.29,101.29,1.37
+Generic $28/yr,BRA,Medium education,0.407,1.0,1.0,37.99,32.21,32.21,1.18
+Generic $28/yr,BRA,High education,0.234,0.83,1.0,22.26,23.06,23.06,0.97
+Generic $28/yr,CAN,Low education,0.032,1.07,1.0,5.16,3.98,3.98,1.3
+Generic $28/yr,CAN,Medium education,0.191,1.06,1.0,10.25,8.5,8.5,1.2
+Generic $28/yr,CAN,High education,0.777,0.98,1.0,17.82,17.2,17.2,1.04
+Generic $28/yr,CHN,Low education,0.225,1.04,1.0,2032.27,312.61,312.61,6.5
+Generic $28/yr,CHN,Medium education,0.52,1.01,1.0,661.01,137.19,137.19,4.82
+Generic $28/yr,CHN,High education,0.255,0.94,1.0,178.18,36.87,36.87,4.83
+Generic $28/yr,DEU,Low education,0.022,1.05,1.0,2.57,2.26,2.26,1.13
+Generic $28/yr,DEU,Medium education,0.448,1.04,1.0,53.94,48.28,48.28,1.12
+Generic $28/yr,DEU,High education,0.529,0.96,1.0,25.48,25.6,25.6,1.0
+Generic $28/yr,EGY,Low education,0.345,1.03,1.0,43.76,100.3,100.3,0.44
+Generic $28/yr,EGY,Medium education,0.299,1.0,1.0,8.97,25.51,25.51,0.35
+Generic $28/yr,EGY,High education,0.356,0.98,1.0,13.26,37.88,37.88,0.35
+Generic $28/yr,GBR,Low education,0.0,1.03,1.0,0.01,0.01,0.01,0.84
+Generic $28/yr,GBR,Medium education,0.46,1.04,1.0,38.89,40.33,40.33,0.96
+Generic $28/yr,GBR,High education,0.54,0.97,1.0,19.06,22.01,22.01,0.87
+Generic $28/yr,IND,Low education,0.542,1.03,1.0,935.3,220.5,220.5,4.24
+Generic $28/yr,IND,Medium education,0.33,0.98,1.0,196.03,55.48,55.48,3.53
+Generic $28/yr,IND,High education,0.128,0.93,1.0,64.55,19.54,19.54,3.3
+Generic $28/yr,ISR,Low education,0.117,1.05,1.0,1.55,1.39,1.39,1.11
+Generic $28/yr,ISR,Medium education,0.243,1.03,1.0,0.93,0.87,0.87,1.06
+Generic $28/yr,ISR,High education,0.64,0.98,1.0,2.43,2.49,2.49,0.98
+Generic $28/yr,JPN,Low education,0.022,1.05,1.0,15.17,3.04,3.04,4.99
+Generic $28/yr,JPN,Medium education,0.574,1.02,1.0,94.2,23.32,23.32,4.04
+Generic $28/yr,JPN,High education,0.404,0.97,1.0,14.89,4.57,4.57,3.26
+Generic $28/yr,MEX,Low education,0.287,1.12,1.0,43.7,82.65,82.65,0.53
+Generic $28/yr,MEX,Medium education,0.4,1.01,1.0,8.0,21.24,21.24,0.38
+Generic $28/yr,MEX,High education,0.313,0.88,1.0,6.57,19.99,19.99,0.33
+Generic $28/yr,NGA,Low education,0.548,1.04,1.0,15.91,39.59,39.59,0.4
+Generic $28/yr,NGA,Medium education,0.305,0.98,1.0,1.54,4.65,4.65,0.33
+Generic $28/yr,NGA,High education,0.147,0.89,1.0,0.96,3.14,3.14,0.31
+Generic $28/yr,NZL,Low education,0.065,1.04,1.0,1.13,1.14,1.14,0.99
+Generic $28/yr,NZL,Medium education,0.299,1.04,1.0,1.54,1.68,1.68,0.92
+Generic $28/yr,NZL,High education,0.637,0.98,1.0,2.12,2.51,2.51,0.84
+Generic $28/yr,ROU,Low education,0.073,1.11,1.0,16.25,2.12,2.12,7.67
+Generic $28/yr,ROU,Medium education,0.543,0.99,1.0,23.78,7.48,7.48,3.18
+Generic $28/yr,ROU,High education,0.384,0.99,1.0,10.49,3.76,3.76,2.79
+Generic $28/yr,TUR,Low education,0.361,1.02,1.0,48.59,84.08,84.08,0.58
+Generic $28/yr,TUR,Medium education,0.431,0.99,1.0,7.81,15.19,15.19,0.51
+Generic $28/yr,TUR,High education,0.208,0.97,1.0,3.18,6.58,6.58,0.48
+Generic $28/yr,USA,Low education,0.034,1.05,1.0,31.44,31.0,31.0,1.01
+Generic $28/yr,USA,Medium education,0.404,1.05,1.0,194.49,203.9,203.9,0.95
+Generic $28/yr,USA,High education,0.561,0.96,1.0,153.71,183.81,183.81,0.84
+Generic $28/yr,ZAF,Low education,0.254,1.03,1.0,1.88,20.7,20.7,0.09
+Generic $28/yr,ZAF,Medium education,0.588,1.0,1.0,0.88,9.83,9.83,0.09
+Generic $28/yr,ZAF,High education,0.158,0.95,1.0,0.33,3.93,3.93,0.08
