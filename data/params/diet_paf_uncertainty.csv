@@ -1,0 +1,5 @@
+outcome,cause_name,age_name,val,lower,upper,source,sd_log
+CKD,Chronic kidney disease,All ages,0.195434647169832,0.108557767075393,0.2944030834996,data/gbd/queryA_ckd_3years.csv,0.2545069933429873
+IschStroke,Ischemic stroke,All ages,0.1431300539381216,0.0310843508917738,0.2736431015923566,data/gbd/Ischemic stroke/Dietary risks/IHME-GBD_2023_DATA-104edbd3-1/IHME-GBD_2023_DATA-104edbd3-1.csv,0.5548776027082328
+IHD,Ischemic heart disease,All ages,0.4551487736867491,0.0837419729511954,0.6795494166699891,data/gbd/Ischemic heart disease/Dietary risks/IHME-GBD_2023_DATA-1b0de818-1/IHME-GBD_2023_DATA-1b0de818-1.csv,0.5341044987861783
+T2D,Diabetes mellitus type 2,All ages,0.2097610298959387,0.0923149271985391,0.3158429985505648,data/gbd/Diabetes mellitus type 2/Dietary risks/IHME-GBD_2023_DATA-ab0e15fa-1/IHME-GBD_2023_DATA-ab0e15fa-1.csv,0.31378556042444244
