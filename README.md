@@ -1,4 +1,4 @@
-# Code and data
+# Overview
 
 ***GLP-1 receptor agonist treatment versus population dietary policy: 19-country comparative risk assessment***
 
