@@ -1,88 +1,119 @@
-# Overview
+# Code and data
 
-***GLP-1 receptor agonist treatment versus dietary policy: 30-year projections in 19 countries***
+***GLP-1 receptor agonist treatment versus population dietary policy: 19-country comparative risk assessment***
 
-The model compares deaths averted over 30 years (2023–2053) by population-wide dietary policy and by GLP-1 receptor agonist (GLP-1RA) treatment for adults with BMI ≥25, in 19 countries and globally, and estimates the treatment coverage needed for GLP-1RA treatment to avert as many deaths as dietary policy.
 
----
 
-## Root scripts
--  `run_all.sh`  Top-level entry point; runs pipeline stages (`params`, `main`, `static`, `mediator_figures`, `figures`; default `all`) by calling the scripts under `code/`.
--  `code/run_main_pipeline.sh`  Orchestrates the projection pipeline: life-table runs (deterministic and Monte Carlo), Supplementary Tables 9-10, discounting, deterministic/structural/population sensitivities, expenditure, overlap, equity and figures; writes results under `results/`.
--  `code/run_static_mediator.sh`  Orchestrates the mediator-level and static comparisons: per country x outcome depth runs, affordable-coverage depth, depth aggregation, and the CKD/T2D and IHD/stroke Monte Carlo shards merged into `results/figure2b_*.csv`.
+## Running
 
----
+```bash
+bash code/pipeline/run_05_tables_figures.sh   # rebuild the supplementary tables and figures from the shipped results
+bash code/pipeline/run_all.sh                 # full analysis from the raw data
+python -m pytest code/lifetable -q            # unit tests of the life table
+```
 
-## code
+## Scripts
 
-### 01_burden/
--  `build_factor_channel_burden.py`  Builds diet-attributable burden by factor and mediator channel from GBD dietary-risk CSVs (`data/gbd/`, `params/country_map.csv`, `params/glp1_channels_gbd2023.csv`); writes `results/factor_burden_by_age.csv` and `results/figure1_channel_burden.csv`.
--  `build_joint_burden.py`  Combines diet-attributable deaths for six outcomes from GBD CSVs and computes crude and age-standardised rates; writes `results/joint_burden_2023.csv` and `results/supp_table2_joint.csv`.
+### code/
 
-### 02_intervention_arms/
--  `build_calibration_k.py`  Derives the calibration factor k = official / modelled PAF per country x outcome from `results/paf_check_vs_official_v2.csv`; writes `params/paf_calibration_k.csv`.
--  `build_glp1_flow_table.py`  Computes dietary PAFs and the GLP-1 reachable/mediated flow fractions; reads GBD CSVs, `results/figure1_channel_burden.csv`, `results/glp1_arm_pif.csv` and `params/overweight_prevalence.csv`; writes `results/figure2_flow_v2.csv`.
--  `build_overweight_prevalence.py`  Derives population-weighted overweight (BMI >= 25) prevalence from GBD BMI exposure, population and WPP data; writes `params/overweight_prevalence.csv`.
--  `check_paf_official.py`  Validates modelled PAFs (`results/paf_gbdexp_2023_{male,female}.csv`) against official GBD PAFs; writes `results/paf_check_vs_official.csv`.
--  `diet_policy_arm.py`  Computes base and scenario dietary PAFs and averted fractions using dose-response curves, exposure and the sodium-via-SBP pathway; writes `results/diet_policy_arm.csv`.
--  `glp1_arm.py`  Computes GLP-1 PIFs for IHD and ischaemic stroke via SBP and FPG from trial parameters and exposure; writes `results/glp1_arm_pif.csv`.
+-  `code/lifetable_v3.py`  Main multi-state life-table entry point (baseline/glp1/diet/combo, IHD, stroke, T2D, CKD, allocation); writes the `--out` CSV plus `_byage`, `_t2d`, `_ckd` and `_check_*.csv`.
 
-### 03_mediation/
--  `calc_depth.py`  Computes the per country x outcome offset depth (GLP-1 shift / dietary push) for SBP/FPG/LDL at 20% coverage; writes `params/figure3_depth_{iso3}_{outcome}.json`.
--  `calc_depth_050.py`  Same as `calc_depth.py` at 50% coverage; writes `params/depth_cov050/figure3_depth_{iso3}_{outcome}.json`.
--  `calc_depth_afford.py`  Computes offset depth at the maximum affordable coverage (`params/coverage_afford_cap.csv`) for countries x cardiovascular outcomes; writes `params/depth_afford/figure3_depth_{iso3}_{outcome}.json`.
--  `gen_depth_cv_multicov.py`  Segments the Figure 3 flows into offset / mediated-not-offset / no-pathway using the depth JSONs; writes `results/f3cv_flows_*.csv`, `results/f3cv_depth_*.csv`, `results/depth_cv_country.csv` and `results/depth_cv_factor.csv`.
--  `paf_deficiency_v2.py`  Core module computing age-specific deficiency PAFs (mean and distributional) from dose-response curves, exposure and the channel/convergence tables; writes `results/paf_denominator.csv`.
--  `run_mediator_figures.sh`  Runs `gen_depth_cv_multicov.py` and then renders the Sankey and factor-bar mediation figures for GLB at 20%, 50% and affordable coverage.
+### code/pipeline/
 
-### 04_static_comparison/
--  `mc_static_ckd_t2d.py`  Monte Carlo (200 CKD / 100 T2D draws) of diet vs GLP-1 avertable shares for CKD and T2D; writes `results/figure2b_ckd_t2d_draws/arms_ui/ratio_ui.csv`.
--  `mc_static_ihd_is.py`  One shard of the IHD/ischaemic stroke Monte Carlo (1000 / nshards draws); writes `results/figure2b_arms_ui_19c_shard{N}.csv` and `results/f2b_draws_shard{N}.csv`.
--  `merge_static_shards.py`  Merges the 8 IHD/stroke shard CSVs into `results/figure2b_arms_ui_19c.csv` and reports between-shard variability.
+-  `code/pipeline/env_main.sh`  Sets `LT_DP_OVERRIDE` and the single-thread BLAS variables; sourced by every pipeline and figure script.
+-  `code/pipeline/run_01_dietary_inputs.sh`  Stage 1: builds the dose-response curves, dietary uncertainty and burdens, runs the dietary policy arm and the education PAFs; logs to `logs/s1_*.log`.
+-  `code/pipeline/run_02_treatment_inputs.sh`  Stage 2: builds overweight prevalence, BMI selection/eligibility, CVD overweight, BMI27 parameters, income quintiles and affordability; logs to `logs/s2_*.log`.
+-  `code/pipeline/run_03_monte_carlo.sh`  Stage 3: prepares and runs the Monte Carlo, curve quantiles, overlap, trajectories, T2D/CKD, scenario Monte Carlo and the convergence checks; logs to `logs/s3_*.log`.
+-  `code/pipeline/run_04_deterministic.sh`  Stage 4: single-factor runs, coverage grid and checks, decomposition, SELECT validation, T2D/CKD sensitivity, equity and cost; logs to `logs/s4_*.log`.
+-  `code/pipeline/run_05_tables_figures.sh`  Stage 5: pre-aggregates the Monte Carlo output, builds the supplementary tables and renders Figures 1-6 and the supplementary figures; logs to `logs/s5_*.log`.
+-  `code/pipeline/run_all.sh`  Master driver that runs stages 01-05 plus pytest, with a parallel-jobs argument; writes logs under `logs/`.
+-  `code/pipeline/verify_compare.py`  Compares pairs of CSV or XLSX files for numerical and textual equality; prints OK/DIFF per pair and exits non-zero on differences.
+-  `code/pipeline/verify_release.sh`  End-to-end reproduction check: copies the release, links `data/`, reruns stages 1, 2, 4 and 5 and compares the outputs with `code/pipeline/verify_compare.py`.
 
-### 05_projection/
--  `build_tables_9_10.py`  Aggregates the Figure 4 Monte Carlo shards into `results/itt_1012/tableS9_deaths_itt.csv` and `results/itt_1012/tableS10_ranking_threshold_itt.csv`.
--  `expenditure_per_death_averted.py`  Computes GLP-1 vs diet cost per death averted from the cumulative-runs table, population and prices; writes `tables/tableS_cost_analysis.csv`.
--  `lifetable_full.py`  Deterministic three-state life-table simulation of the diet, GLP-1 and combination arms from GBD incidence/prevalence/deaths and the flow and policy tables; writes `results/figure4_full.csv`.
--  `lifetable_mc.py`  Runs sharded Monte Carlo draws by perturbing the flow and policy inputs and calling `lifetable_full.py`; writes `results/figure4_mc{tag}_cov{cov}_shard{N}.csv`.
--  `summarise_annual_deaths.py`  Summarises annual quantiles across the Figure 4 Monte Carlo shards; writes `results/itt_1012/annual_deaths_averted.csv`.
--  `t2d_incidence_arm.py`  Projects averted new T2D cases per year for the GLP-1 and diet arms from GBD T2D incidence, the trial hazard ratio and the dietary PAF; writes `results/t2d_incidence_arms.csv`.
--  `t2d_mc.py`  Monte Carlo of averted new T2D cases for the dietary and GLP-1RA arms (sampling the T2D incidence hazard ratio and treatment retention); writes `results/itt_1012/t2d_mc_summary.csv`.
+### code/preprocessing/
 
-### 06_sensitivity/
--  `discounting.py`  Applies 0 / 3 / 5% annual discounting to the Figure 4 Monte Carlo cumulative deaths; writes `results/itt_1012/sens_discount_itt.csv`.
--  `lifetable_structural_sensitivity.py`  Reruns the life table with structural variants (same-cycle case fatality; diseased-compartment background-mortality multipliers) across countries; writes `results/itt_1012/sens_structural_countries_itt.csv` and `tables/tableS_lifetable_structural_sensitivity.csv`.
--  `overlap_full_redundancy_bound.py`  Computes full-redundancy lower bounds for the diet + GLP-1 combination from the Figure 4 Monte Carlo shards; writes `tables/tableS19_full_redundancy_bound.csv`.
--  `overlap_sensitivity.py`  Sweeps 0-100% overlap between the dietary and GLP-1 effects using the Figure 4 Monte Carlo shards; writes `tables/tableS16_overlap_sensitivity.csv`.
--  `persistence_implementation_sweep.py`  Runs a 48-scenario grid over policy maintenance, GLP-1 retention and diet ramp-up through `lifetable_full.py`; writes `results/sensitivity_sweep_19c.csv`.
--  `population_sensitivity.py`  Reruns the life table with the 2053 UN WPP population structure instead of 2023; writes `tables/tableS_population_sensitivity_v2.csv`.
--  `run_deterministic_sensitivity.py`  Runs deterministic sensitivity sub-jobs (incidence split; cardiovascular and CKD hazard ratios) through `lifetable_full.py`; writes `results/itt_1012/sens_deterministic_itt.csv`.
+-  `code/preprocessing/add_nzl_quintiles.py`  Adds New Zealand income quintiles from the World Bank GNI file plus fixed survey shares; appends rows to `data/params/income_quintiles_wb.csv`.
+-  `code/preprocessing/affordability_model.py`  Computes branded and generic GLP-1RA annual cost as a percentage of quintile income; writes `data/results/affordability_matrix.csv`.
+-  `code/preprocessing/build_bmi27_params.py`  Derives adult BMI>=27/30 prevalence and CVD-specific overweight shares from GBD data; reads `data/params/select_elig.csv` and `data/gbd/cause_totals/`; writes `data/params/overweight_prevalence_bmi27.csv` and `data/params/elig_scale_bmi30_rel27.csv`.
+-  `code/preprocessing/build_bmi_gamma.py`  Fits a gamma BMI distribution to p25/p30 to estimate BMI>=27 prevalence; reads `data/params/select_elig.csv` and `data/gbd/1-3_population.csv`; writes `data/params/overweight_prevalence_bmi27_gamma.csv` and `data/params/bmi27_fit_comparison.csv`.
+-  `code/preprocessing/build_coverage_afford_cap.py`  Computes the maximum affordable GLP-1RA coverage per country from `data/results/affordability_matrix.csv` and `data/params/income_quintiles_global.csv`; writes `data/params/coverage_afford_cap.csv` (or compares with `--check`).
+-  `code/preprocessing/build_curves.py`  Converts the GBD dose-response curve files into TMREL-anchored relative risks with the gdd_var mapping; writes `data/params/dose_response_conv_fixed.csv`.
+-  `code/preprocessing/build_diet_uncertainty.py`  Extracts GBD 2023 diet-attributable death percentages with uncertainty intervals from `data/gbd/**`; writes `data/params/diet_paf_uncertainty.csv`.
+-  `code/preprocessing/build_factor_burden.py`  Extracts single-factor diet-attributable PAFs and deaths by country, sex, age and outcome from `data/gbd/`; writes `data/results/factor_burden_by_age.csv`.
+-  `code/preprocessing/build_global_income_quintiles.py`  Builds global income quintiles from World Bank GNI/share files and WPP population; writes `data/params/income_quintiles_global.csv`.
+-  `code/preprocessing/build_joint_burden.py`  Computes joint diet-attributable deaths and crude/age-standardised rates for six outcomes; writes `data/results/joint_burden_2023.csv` and `data/results/supp_table2_joint.csv`.
+-  `code/preprocessing/build_overweight_cvd.py`  Estimates overweight prevalence among IHD/stroke cases using GBD BMI exposure and cohort RRs; writes `data/params/overweight_cvd.csv` and `data/params/overweight_cvd_sensitivity.csv`.
+-  `code/preprocessing/build_overweight_prevalence.py`  Computes adult BMI>=25 prevalence per country from GBD BMI exposure and population files; writes `data/params/overweight_prevalence.csv`.
+-  `code/preprocessing/build_select_elig.py`  Fits a log-normal BMI distribution per sex/age from GBD prevalence and T2D rates; writes `data/params/select_elig.csv`.
+-  `code/preprocessing/diet_arm_parallel.py`  Parallel driver computing the dietary PAFs for all policy scenarios and single factors; writes `data/results/v3/diet_policy_arm_v2_tailored.csv`.
+-  `code/preprocessing/diet_policy_arm.py`  Computes baseline and scenario dietary PAFs (feasible, aspirational, tailored, single-factor) with the sodium-via-SBP effects; writes `data/results/diet_policy_arm.csv`.
+-  `code/preprocessing/equity_paf_by_edu_v2.py`  Computes the dietary PAFs by education tier using cross-classified exposures; writes `data/results/v3/equity_paf_by_edu_v2.csv`.
+-  `code/preprocessing/paf_deficiency_v2.py`  Computes the age-specific dietary PAFs from the dose-response curves and exposure with a log-normal CV distribution and channel convergence; writes `data/results/paf_denominator.csv`.
+-  `code/preprocessing/parse_income_quintiles.py`  Parses the World Bank income-share and GNI bulk files for the 19 countries; writes `data/params/income_quintiles_wb.csv`.
+-  `code/preprocessing/select_check_v3.py`  Simulates a SELECT-like cohort with the life table to compare against trial mortality and event ratios; writes `data/results/v3/select_check.csv`.
 
-### 07_equity/
--  `affordability_model.py`  Merges income quintiles (`params/income_quintiles_wb.csv`) with GLP-1 prices to compute cost as a percentage of income; writes `results/affordability_matrix.csv`.
--  `build_equity_twoarm.py`  Allocates dietary and GLP-1 deaths averted across education groups using Wittgenstein shares, equity PAFs, joint burden and affordability; writes `tables/tableS_equity_twoarm.csv` and `tables/tableS_equity_mapping_sensitivity.csv`.
--  `equity_burden_by_edu.py`  Combines education PAFs, Wittgenstein population shares and the Figure 1 channel burden; writes `results/equity_burden_by_edu.csv`.
--  `equity_mc.py`  Monte Carlo of the low/high-education PAF ratio from exposure gradients and dose-response curves; writes `results/equity_ratio_ui.csv`.
--  `equity_paf_by_edu.py`  Computes education-specific PAFs by scaling exposure with the cross-education / national intake ratios; writes `results/equity_paf_by_edu.csv`.
+### code/analysis/
 
-### figures/
--  `plot_figure1_starting_points.py`  Draws Figure 1 (age-standardised rates by outcome, overweight prevalence, dietary-factor shares) from the Supplementary Tables workbook and `params/overweight_prevalence.csv`; writes `figures/figure1_starting_points.*`.
--  `plot_figure2_projections.py`  Draws the global and per-country annual/cumulative projection panels from the `results/itt_1012/` tables; writes `figures/figure2_projections*.{pdf,png}`.
--  `plot_figure3_threshold.py`  Plots the dietary-vs-GLP-1 threshold coverage curves and per-country thresholds from the `results/itt_1012/` tables and sensitivity sweep; writes `figures/figure3_threshold.*`.
--  `plot_figure4_country_drivers.py`  Relates targeted dietary share, overweight prevalence and threshold coverage and draws a factor-priority heat map; writes `figures/figure4_country_drivers.*`.
--  `plot_figure5a_robustness.py`  Compiles all sensitivity results (deterministic, structural, persistence, population, discounting) into a forest-style robustness figure; writes `figures/figure5_robustness.*`.
--  `plot_figure5b_sensitivity_heatmap.py`  Builds a country x scenario heat map of diet/GLP-1 ratios; writes `figures/suppfig_sensitivity_heatmap.*`.
--  `plot_figure6_equity.py`  Draws the equity panels (PAF ratio, affordability, education-group slope charts); writes `figures/figure6_equity*.*`.
--  `plot_suppfig2_mediation.py`  Draws the mediation-category stacked bars and the accounting-rule dot plot; writes `figures/suppfig2_mediation.{pdf,png}`.
--  `plot_suppfig3a_sankey.R`  Renders the factor-mediator-outcome alluvial/Sankey diagram per country x coverage from `results/f3cv_flows_*.csv`; writes `figures/figure3_all/sankey_cv_*.{pdf,png}`.
--  `plot_suppfig3b_factor_bars.R`  Renders the stacked dietary-factor bars by offset segment from `results/f3cv_depth_*.csv`; writes `figures/figure3_all/foodbar_cv_*.{pdf,png}`.
--  `plot_suppfig4_static.py`  Draws per-outcome static avertable-share comparisons (diet vs GLP-1 by scenario); writes `figures/suppfig4_static.{pdf,png}`.
--  `plot_suppfig8_expenditure.R`  Renders radial bar charts of diet vs GLP-1 expenditure per death averted from `tables/tableS_cost_analysis.csv`; writes `figures/suppfig8_expenditure.{pdf,png}`.
+-  `code/analysis/convergence_check.py`  Compares the first and second halves of the Monte Carlo draws for medians and UI bounds; writes `data/results/v3/mc/convergence_halves.csv`.
+-  `code/analysis/cost_v3.py`  Computes GLP-1RA versus dietary-policy expenditure per death averted from the programme/allocation files; writes `tableS_cost_v3.csv` in `--outdir`.
+-  `code/analysis/coverage_check.py`  Checks annual enrolment against the coverage targets in `data/results/v3/grid/**/*_check_programme.csv`; writes `coverage_check_by_year.csv` and `coverage_check_summary.csv`.
+-  `code/analysis/equity_cost_v3.sh`  Runs `code/lifetable_v3.py` at 10%, 20% and affordable coverage, then `code/analysis/equity_v3.py` and `code/analysis/cost_v3.py`; writes `data/results/v3/equity_cost_final/cov*` tables.
+-  `code/analysis/equity_v3.py`  Distributes deaths averted across education groups using Wittgenstein populations, education PAFs and affordability; writes `tableS_equity_v3.csv` and `tableS_equity_mapping_sensitivity_v3.csv`.
+-  `code/analysis/grid_v3.sh`  Runs the life table over a coverage grid with risk-prioritised and uniform allocation; writes `data/results/v3/grid/*.csv` and `summary_crossover.csv`.
+-  `code/analysis/mc_curve_quantiles.py`  Computes the median and 95% UI of the diet/treatment deaths-averted ratio by coverage from the Monte Carlo outputs; writes `data/results/v3/mc/curve_ratio_quantiles.csv`.
+-  `code/analysis/mc_scen_v3.py`  Defines the sensitivity scenarios and runs the life table per scenario, draw and coverage; writes `data/results/v3/mc_scen/summary_scenarios.csv` and `summary_paired.csv`.
+-  `code/analysis/mc_scen_v3.sh`  Prepares the scenario job list, runs the `code/analysis/mc_scen_v3.py` workers in parallel and aggregates; writes `data/results/v3/mc_scen/summary_scenarios*.csv`.
+-  `code/analysis/mc_traj_v3.py`  Runs the life table for the trajectory settings (10%, 20%, affordable, aspirational) per Monte Carlo draw; writes `trajectories.csv`, `trajectories_all_outcomes.csv` and `overtaking_year.csv`.
+-  `code/analysis/mc_v3.py`  Main Monte Carlo: samples hazard ratios and persistence parameters, runs `code/lifetable_v3.py` per draw and coverage; writes `draws.csv`, `diet/draw*.csv`, `out/*.csv` and `summary_crossover_ratios.csv`.
+-  `code/analysis/mc_v3.sh`  Driver for the main Monte Carlo: prepares the draws, runs the `code/analysis/mc_v3.py` workers in parallel and aggregates `data/results/v3/mc/summary_*.csv`.
+-  `code/analysis/outcome_crossover_v3.py`  Computes the crossover coverage and diet/treatment ratios for T2D and CKD from `data/results/v3/mc_t2dckd/out`; writes `outcome_curves.csv` and `summary_outcome_crossover.csv`.
+-  `code/analysis/outcome_cumulative_v3.py`  Aggregates 30-year cumulative totals and effect-overlap gains by outcome from `data/results/v3/mc_traj_t2dckd/out`; writes `cumulative_by_outcome.csv` and `overlap_by_outcome.csv`.
+-  `code/analysis/overlap_v3.py`  Quantifies the incremental benefit of combining diet and treatment at 0-100% effect overlap; writes `data/results/v3/overlap/overlap_by_country.csv` and `overlap_summary.csv`.
+-  `code/analysis/rank_tailored_factors.py`  Ranks single-factor dietary benefits per country from `data/results/v3/single_factor/single_v*.csv`; writes `data/params/tailored_top3.csv` (or verifies with `--check`).
+-  `code/analysis/run_decomp_v3.sh`  Runs the main, postA and postC life-table variants for the decomposition; writes `data/results/v3/decomp/decomp_summary.csv` and `main_check_programme.csv`.
+-  `code/analysis/run_single_factor_v3.sh`  Runs the 12 single-factor dietary scenarios at 20% coverage in parallel; writes `data/results/v3/single_factor/single_v*.csv` and `data/tables/table_single_factor_v3.csv`.
+-  `code/analysis/run_t2d_ckd.sh`  Re-runs the coverage grid and trajectories with T2D and CKD enabled; writes `data/results/v3/mc_t2dckd` and `data/results/v3/mc_traj_t2dckd` outputs.
+-  `code/analysis/sa_t2d_ckd.sh`  Sensitivity analyses varying the T2D incidence hazard ratio and the blood-pressure fall at 20% and affordable coverage; writes `data/results/v3/sa_t2d_ckd/summary_sa_t2d_ckd.csv`.
+-  `code/analysis/test_select_v3.sh`  External validation of a SELECT-like cohort under several hazard variants; writes `data/results/v3/select_main.csv` and `select_*.csv`.
 
----
+### code/outputs/
 
-## Data and parameters
--  `params/`  Model parameters: country map, dose-response curves, mediation matrix, trial effects, prices, income quintiles, overweight prevalence and exposures.
--  `results/`  Final results used by the figure scripts; `results/itt_1012/` holds the projection and sensitivity outputs.
+-  `code/outputs/build_supplementary_tables_v5.py`  Rebuilds all supplementary tables from `data/results/v3/*` and `data/tables/table_single_factor_v3.csv` into `data/tables/Supplementary_Tables_v5.xlsx` using the v4 template.
+-  `code/outputs/check_burden_tables.py`  Recomputes diet-attributable cardiovascular deaths from `data/results/factor_burden_by_age.csv` and compares them with Supplementary Table 5 in the workbook.
+-  `code/outputs/figure1/plot_figure1_starting_points.py`  Figure 1 three-panel starting-point plot (burden, eligibility, dietary factor shares); reads Supplementary Tables 2 and 6, the Monte Carlo crossover summary and the decomp programme file; writes `data/figures/figure1_starting_points.pdf/png` and `_data.csv`.
+-  `code/outputs/figure2/plot_figure2_projections.py`  Figure 2 annual and cumulative projections with country small multiples; reads the Monte Carlo trajectories, `summary_deaths`, overlap and scenario CSVs; writes `data/figures/figure2_projections*`.
+-  `code/outputs/figure3/plot_figure3_threshold.py`  Figure 3 threshold curves, coverage heatmap and crossover panel; reads the Monte Carlo and scenario summaries, overlap and curve quantiles; writes `data/figures/figure3_threshold.pdf/png/_data.csv`.
+-  `code/outputs/figure4/plot_figure4_country_drivers.py`  Figure 4 country-driver correlations and dietary priority bubble matrix; reads the supplementary tables, `table_single_factor_v3.csv` and the Monte Carlo summary; writes `data/figures/figure4_country_drivers*` and `_correlations.csv`.
+-  `code/outputs/figure5/plot_figure5_robustness.py`  Figure 5 robustness forest plot and country heatmap across the sensitivity scenarios; reads the `data/results/v3/mc` and `mc_scen` summaries; writes `data/figures/figure5_robustness.pdf/png/_data.csv`.
+-  `code/outputs/figure6/plot_figure6_equity.py`  Figure 6 education-gradient, affordability and price-scenario slope panels; reads the supplementary tables and `data/results/v3/equity_cost_final/cov0.20`; writes `data/figures/figure6_equity*`.
+-  `code/outputs/supp_preaggregate.py`  Pre-aggregates the Monte Carlo outputs into `data/results/v3/supp/prob_diet_leads.csv` and `data/results/v3/supp/outcomes_by_arm.csv`.
+-  `code/outputs/supplementary/plot_suppfig_expenditure.R`  Supplementary Figure 10 polar cost-per-death charts in ggplot2; reads `data/results/v3/equity_cost_final/cov0.20/tableS_cost_v3.csv`; writes `data/figures/figure6c_cost_log.*` and `data/figures/`.
+-  `code/outputs/supplementary/plot_suppfig_t2d_ckd.py`  Supplementary Figure 4 T2D and CKD trajectories plus crossover panels; reads the `mc_traj_t2dckd` and `mc_t2dckd` summaries; writes `data/figures/suppfig_t2d_ckd.pdf/png`.
 
-**Raw data**: Global Burden of Disease Study 2023 (IHME), Global Dietary Database, UN World Population Prospects 2024, Wittgenstein Centre Human Capital Data Explorer, World Bank income distribution data, and published trial results (SELECT, FLOW, SUSTAIN-6, SOUL, STEP 1). Download instructions are in `params/Raw_data.md`. These data are subject to their providers' terms of use and are not redistributed here.
+### code/lifetable/
+
+-  `code/lifetable/__init__.py`  Empty package marker for the `code/lifetable` module.
+-  `code/lifetable/allocation.py`  Allocates treatment places to eligible adults by risk priority, uniform shares or tiers; returns the eligible pool, target and achieved numbers.
+-  `code/lifetable/calibration.py`  Calibrates the four-state life-table and CKD rates to the GBD incidence and death targets; emits feasibility and calibration check rows.
+-  `code/lifetable/ckd.py`  Runs the CKD extension with SBP-mediated effects for each arm; returns the rows of CKD deaths averted by year.
+-  `code/lifetable/diabetes.py`  Builds the type 2 diabetes overlay (incidence, overweight/diabetes splits, tier-3 BMI-30 rule) and the diabetes hazard multipliers.
+-  `code/lifetable/effects.py`  Builds the hazard multipliers for the dietary policy and GLP-1RA effects by arm, eligibility tier and ramp year.
+-  `code/lifetable/eligibility.py`  Computes the overweight shares by disease state, age-specific eligibility, coverage targets, initial states and open-population entrants.
+-  `code/lifetable/inputs.py`  Loads and pickles the cached GBD rates and population, and reads the dietary PIF file for the selected scenario.
+-  `code/lifetable/outputs.py`  Writes the result CSV plus the `_byage`, `_t2d`, `_ckd` and `_check_*.csv` diagnostics and prints the calibration/conservation summaries.
+-  `code/lifetable/persistence.py`  Models treatment stopping and restarting with residual benefit, and reconstructs the published discontinuation/restart figures.
+-  `code/lifetable/projection.py`  Runs the 30-year multi-arm projection per country (allocation, ageing, events, T2D overlay, persistence, entrants).
+-  `code/lifetable/settings.py`  Defines the ages, sexes, states, arms and treatment states, and reads all `SENS_*` environment settings into a namespace.
+-  `code/lifetable/test_lifetable.py`  pytest unit tests for the transitions, calibration, persistence, allocation and eligibility helpers in `code/lifetable`.
+-  `code/lifetable/transitions.py`  Provides the hazard construction, scalar and vectorised one-year transition steps and age-one-year aggregation.
+
+## Data
+
+`data/` holds every input and output, with at most one subfolder level (the Monte Carlo tree under
+`data/results/v3/` keeps its own level):
+
+-  `data/input/`  processed GBD dietary exposure, systolic blood pressure and Wittgenstein education inputs;
+-  `data/params/`  model parameters: country map, dose-response curves, mediation matrix, trial effects, prices, income quintiles, overweight prevalence and exposures;
+-  `data/results/`  result summaries read by the figure and table scripts;
+-  `data/tables/`  supplementary-table workbooks and the single-factor table;
+-  `data/README.md`  sources and download instructions for the raw data, which are not redistributed.
