@@ -1,5 +1,5 @@
 set -u; source code/pipeline/env_main.sh; t() { echo "$(date '+%F %T') $*"; }; mkdir -p logs data/figures; fail=0
-C=code/figures
+C=code/outputs
 n=0; run() { n=$((n+1)); t "$1"; shift; "$@" > logs/s5_$n.log 2>&1 || { echo "   FAILED: $* (logs/s5_$n.log)"; tail -6 logs/s5_$n.log | sed "s/^/      /"; fail=$((fail+1)); }; }
 [ -d data/results/v3/mc/out ] && run "5.1 Monte Carlo summaries for the tables" python code/outputs/supp_preaggregate.py --jobs 32
 run "5.2 supplementary tables"                python code/outputs/build_supplementary_tables_v5.py
