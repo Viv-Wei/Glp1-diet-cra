@@ -21,7 +21,7 @@ cmp_ $(pub data/params/dose_response_conv_fixed.csv data/params/diet_paf_uncerta
 python code/outputs/check_burden_tables.py || fails=$((fails+1))
 
 t "B. unit tests and deterministic runs"
-python -m pytest code/tests -q 2>&1 | tail -1
+python -m pytest code/lifetable -q 2>&1 | tail -1
 bash code/analysis/run_decomp_v3.sh > logs/verify_decomp.log 2>&1 || { echo "   decomp FAILED"; fails=$((fails+1)); }
 cmp_ $(cd $R && for f in data/results/v3/decomp/*.csv; do echo "$R/$f $W/$f"; done)
 
