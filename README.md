@@ -1,4 +1,4 @@
-# Overview
+# Code and data
 
 ***GLP-1 receptor agonist treatment versus population dietary policy: 19-country comparative risk assessment***
 
@@ -78,15 +78,15 @@ python -m pytest code/lifetable -q            # unit tests of the life table
 
 -  `code/outputs/build_supplementary_tables_v5.py`  Rebuilds all supplementary tables from `data/results/v3/*` and `data/tables/table_single_factor_v3.csv` into `data/tables/Supplementary_Tables_v5.xlsx` using the v4 template.
 -  `code/outputs/check_burden_tables.py`  Recomputes diet-attributable cardiovascular deaths from `data/results/factor_burden_by_age.csv` and compares them with Supplementary Table 5 in the workbook.
--  `code/outputs/figure1/plot_figure1_starting_points.py`  Figure 1 three-panel starting-point plot (burden, eligibility, dietary factor shares); reads Supplementary Tables 2 and 6, the Monte Carlo crossover summary and the decomp programme file; writes `data/figures/figure1_starting_points.pdf/png` and `_data.csv`.
--  `code/outputs/figure2/plot_figure2_projections.py`  Figure 2 annual and cumulative projections with country small multiples; reads the Monte Carlo trajectories, `summary_deaths`, overlap and scenario CSVs; writes `data/figures/figure2_projections*`.
--  `code/outputs/figure3/plot_figure3_threshold.py`  Figure 3 threshold curves, coverage heatmap and crossover panel; reads the Monte Carlo and scenario summaries, overlap and curve quantiles; writes `data/figures/figure3_threshold.pdf/png/_data.csv`.
--  `code/outputs/figure4/plot_figure4_country_drivers.py`  Figure 4 country-driver correlations and dietary priority bubble matrix; reads the supplementary tables, `table_single_factor_v3.csv` and the Monte Carlo summary; writes `data/figures/figure4_country_drivers*` and `_correlations.csv`.
--  `code/outputs/figure5/plot_figure5_robustness.py`  Figure 5 robustness forest plot and country heatmap across the sensitivity scenarios; reads the `data/results/v3/mc` and `mc_scen` summaries; writes `data/figures/figure5_robustness.pdf/png/_data.csv`.
--  `code/outputs/figure6/plot_figure6_equity.py`  Figure 6 education-gradient, affordability and price-scenario slope panels; reads the supplementary tables and `data/results/v3/equity_cost_final/cov0.20`; writes `data/figures/figure6_equity*`.
+-  `code/outputs/plot_figure1_starting_points.py`  Figure 1 three-panel starting-point plot (burden, eligibility, dietary factor shares); reads Supplementary Tables 2 and 6, the Monte Carlo crossover summary and the decomp programme file; writes `data/figures/figure1_starting_points.pdf/png` and `_data.csv`.
+-  `code/outputs/plot_figure2_projections.py`  Figure 2 annual and cumulative projections with country small multiples; reads the Monte Carlo trajectories, `summary_deaths`, overlap and scenario CSVs; writes `data/figures/figure2_projections*`.
+-  `code/outputs/plot_figure3_threshold.py`  Figure 3 threshold curves, coverage heatmap and crossover panel; reads the Monte Carlo and scenario summaries, overlap and curve quantiles; writes `data/figures/figure3_threshold.pdf/png/_data.csv`.
+-  `code/outputs/plot_figure4_country_drivers.py`  Figure 4 country-driver correlations and dietary priority bubble matrix; reads the supplementary tables, `table_single_factor_v3.csv` and the Monte Carlo summary; writes `data/figures/figure4_country_drivers*` and `_correlations.csv`.
+-  `code/outputs/plot_figure5_robustness.py`  Figure 5 robustness forest plot and country heatmap across the sensitivity scenarios; reads the `data/results/v3/mc` and `mc_scen` summaries; writes `data/figures/figure5_robustness.pdf/png/_data.csv`.
+-  `code/outputs/plot_figure6_equity.py`  Figure 6 education-gradient, affordability and price-scenario slope panels; reads the supplementary tables and `data/results/v3/equity_cost_final/cov0.20`; writes `data/figures/figure6_equity*`.
 -  `code/outputs/supp_preaggregate.py`  Pre-aggregates the Monte Carlo outputs into `data/results/v3/supp/prob_diet_leads.csv` and `data/results/v3/supp/outcomes_by_arm.csv`.
--  `code/outputs/supplementary/plot_suppfig_expenditure.R`  Supplementary Figure 10 polar cost-per-death charts in ggplot2; reads `data/results/v3/equity_cost_final/cov0.20/tableS_cost_v3.csv`; writes `data/figures/figure6c_cost_log.*` and `data/figures/`.
--  `code/outputs/supplementary/plot_suppfig_t2d_ckd.py`  Supplementary Figure 4 T2D and CKD trajectories plus crossover panels; reads the `mc_traj_t2dckd` and `mc_t2dckd` summaries; writes `data/figures/suppfig_t2d_ckd.pdf/png`.
+-  `code/outputs/plot_suppfig_expenditure.R`  Supplementary Figure 10 polar cost-per-death charts in ggplot2; reads `data/results/v3/equity_cost_final/cov0.20/tableS_cost_v3.csv`; writes `data/figures/figure6c_cost_log.*` and `data/figures/`.
+-  `code/outputs/plot_suppfig_t2d_ckd.py`  Supplementary Figure 4 T2D and CKD trajectories plus crossover panels; reads the `mc_traj_t2dckd` and `mc_t2dckd` summaries; writes `data/figures/suppfig_t2d_ckd.pdf/png`.
 
 ### code/lifetable/
 
