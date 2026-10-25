@@ -1,6 +1,6 @@
 # Code and data
 
-***GLP-1 receptor agonist treatment versus population dietary policy: 19-country comparative risk assessment***
+***When can GLP-1 receptor agonists match dietary policy in averting cardiovascular deaths? A 19-country modelling study***
 
 ## Running
 
@@ -90,7 +90,7 @@ python -m pytest code/lifetable -q            # unit tests of the life table
 
 ### code/lifetable/
 
--  `code/lifetable/__init__.py`  Empty package marker for the `code/lifetable` module.
+-  `code/lifetable/__init__.py`  Package marker with an overview of the life-table modules.
 -  `code/lifetable/allocation.py`  Allocates treatment places to eligible adults by risk priority, uniform shares or tiers; returns the eligible pool, target and achieved numbers.
 -  `code/lifetable/calibration.py`  Calibrates the four-state life-table and CKD rates to the GBD incidence and death targets; emits feasibility and calibration check rows.
 -  `code/lifetable/ckd.py`  Runs the CKD extension with SBP-mediated effects for each arm; returns the rows of CKD deaths averted by year.
@@ -115,3 +115,7 @@ python -m pytest code/lifetable -q            # unit tests of the life table
 -  `data/results/`  result summaries read by the figure and table scripts;
 -  `data/tables/`  supplementary-table workbooks and the single-factor table;
 -  `data/README.md`  sources and download instructions for the raw data, which are not redistributed.
+
+## Licence and citation
+
+The code is released under the MIT licence (see `LICENSE`). Inputs derived from the Global Burden of Disease Study 2023, the Global Dietary Database, UN World Population Prospects 2024, the World Bank and the Wittgenstein Centre remain subject to the terms of those sources (see `data/README.md`). If you use this code, please cite the accompanying article in The BMJ.
