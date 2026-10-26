@@ -60,6 +60,11 @@ SINGLE_FACTORS = [
 ]
 for _gv in SINGLE_FACTORS:
     SCENARIOS[f"single_{_gv}"] = {_gv: ("toward_tmrel", 0.20)}
+# Parts of the feasible package used only for the effect on deaths after onset (SENS_DIET_POST, scenario analyses):
+# sodium, whose effect through blood pressure is the same with and without previous cardiovascular disease in trials
+# (BPLTTC, Lancet 2021), and sodium with whole grains (cohort evidence in myocardial infarction survivors, Li, BMJ 2014)
+SCENARIOS["post_na"] = {"v37": SCENARIOS["feasible"]["v37"]}
+SCENARIOS["post_na_wg"] = {"v37": SCENARIOS["feasible"]["v37"], "v08": SCENARIOS["feasible"]["v08"]}
 TAILORED = {}
 _tf = os.environ.get("CRA_TAILORED_FILE", "data/params/tailored_top3.csv")
 if os.path.exists(_tf):
@@ -80,14 +85,20 @@ def shifted_exposure(expo, curves_df, scenario):
         items = [(iso, gv, mx) for iso, d in TAILORED.items() for gv, mx in d.items()]
     else:
         items = [(None, gv, mx) for gv, mx in SCENARIOS[scenario].items()]
+    # Direction of each factor: protective factors (GBD "low_" curves) are only raised towards the TMREL, harmful
+    # factors only lowered. A stratum already on the favourable side of the TMREL is left unchanged, because a policy
+    # promoting a protective food would not lower intake where it is already high (and vice versa).
+    protective = curves_df.groupby("gdd_var").curve_id.first().str.startswith("low_")
     for iso_t, gv, (mode, x) in items:
         m = (e.gdd_var == gv) & ((e.iso3 == iso_t) if iso_t is not None else True)
         if mode == "pct":
-            e.loc[m, "intake_median"] *= 1 + x
+            e.loc[m, "intake_median"] *= (1 + x)
         else:
-            t = 3.0 if gv == "v37" else tm.get(gv, np.nan)
+            t = 3.0 if gv == "v37" else tm.get(gv, np.nan)   # sodium TMREL (3.0 g/day) is not in the curve table
             if pd.notna(t):
-                e.loc[m, "intake_median"] += x * (t - e.loc[m, "intake_median"])
+                step = x * (t - e.loc[m, "intake_median"])
+                step = step.clip(lower=0) if bool(protective.get(gv, False)) else step.clip(upper=0)
+                e.loc[m, "intake_median"] += step
     return e
 
 

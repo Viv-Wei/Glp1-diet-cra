@@ -11,11 +11,13 @@ from matplotlib.patches import Patch
 
 p = argparse.ArgumentParser()
 p.add_argument("--root", default=".")
-p.add_argument("--xlsx", default="data/tables/Supplementary_Tables_final1014.xlsx")
-p.add_argument("--t-paf", type=int, default=16)
-p.add_argument("--t-cost", type=int, default=19)
+p.add_argument("--xlsx", default="data/tables/Supplementary_Tables_v5.xlsx")
+p.add_argument("--t-paf", type=int, default=14)
+p.add_argument("--t-cost", type=int, default=17)
 p.add_argument("--equity", default="data/results/v3/equity_cost_final/cov0.20")
 p.add_argument("--mc", default="data/results/v3/mc")
+p.add_argument("--budget", default="data/results/v3/expenditure_ui/budget_ui.csv")
+p.add_argument("--equity-mc", default="data/results/v3/equity_mc")
 p.add_argument("--out", default="data/figures/figure6_equity")
 a = p.parse_args()
 R = lambda f: os.path.join(a.root, f)
@@ -23,6 +25,11 @@ tab = lambda n: pd.read_excel(R(a.xlsx), f"Supplementary Table {n}", header=1).i
 
 t13, t18 = tab(a.t_paf), tab(a.t_cost)
 t16 = pd.read_csv(R(f"{a.equity}/tableS_equity_v3.csv"))
+# Monte Carlo medians and 95% UIs (first 300 simulations): pooled over the 19 countries, and by country
+_ren = {"diet_median": "diet", "glp1_median": "glp1"}
+POOL = pd.read_csv(R(f"{a.equity_mc}/pooled_ui.csv")).rename(columns=_ren)
+EQUI = pd.read_csv(R(f"{a.equity_mc}/equity_ui.csv")).rename(columns=_ren)
+MAPU = pd.read_csv(R(f"{a.equity_mc}/mapping_ui.csv"))
 _cr = pd.read_csv(R(f"{a.mc}/summary_crossover_ratios.csv")).set_index("iso3")
 ORDER = _cr.drop("GLB").sort_values("xext_median_%").index.tolist()
 num = lambda s: pd.to_numeric(s, errors="coerce")
@@ -43,9 +50,10 @@ GRP = {
     **{k: "#E64B35" for k in "USA DEU GBR JPN".split()},
 }
 fig = plt.figure(figsize=(7.4, 5.3))
-axA = fig.add_axes([0.075, 0.22, 0.23, 0.71])
-axB = fig.add_axes([0.335, 0.22, 0.27, 0.71])
-axC = fig.add_axes([0.71, 0.22, 0.255, 0.71])
+axA = fig.add_axes([0.07, 0.22, 0.175, 0.71])
+axB = fig.add_axes([0.265, 0.22, 0.205, 0.71])
+axD = fig.add_axes([0.505, 0.22, 0.16, 0.71])        # panel c: cost threshold
+axC = fig.add_axes([0.75, 0.22, 0.19, 0.71])         # panel d: deaths averted by education group
 y = np.arange(len(ORDER))[::-1]
 Y = dict(zip(ORDER, y))
 
@@ -61,7 +69,7 @@ for code, lab, mk, col, dy in OUT:
             continue
         r_ = x.loc[iso]
         m, lo, hi = (
-            num(r_["Low/high education PAF ratio, median"]),
+            num(r_["Low/high education PAF ratio"] if "Low/high education PAF ratio" in r_ else r_["Low/high education PAF ratio, median"]),
             num(r_["95% UI lower bound"]),
             num(r_["95% UI upper bound"]),
         )
@@ -229,16 +237,17 @@ PRICES = [
 
 def draw_slope(ax, d, scale, small=False, label=False):
 
-    g = (
-        d.groupby(["Price scenario", "Education group"])[
-            ["Dietary policy averted (thousands)", "GLP-1RA averted (thousands)"]
-        ].sum()
-        * scale
-    )
+    g = d.set_index(["Price scenario", "Education group"])[["diet", "diet_lo", "diet_hi", "glp1", "glp1_lo", "glp1_hi"]] * scale
     X = np.arange(len(PRICES))
-    for edu, lab, col in EDU:
-        tv = [g.loc[(p, edu), "GLP-1RA averted (thousands)"] for p, _ in PRICES]
-        dv = g.loc[("Branded", edu), "Dietary policy averted (thousands)"]
+    for k_, (edu, lab, col) in enumerate(EDU):
+        off_ = (k_ - 1) * (0.09 if not small else 0.12)                     # interval offsets by education group
+        tv = [g.loc[(p, edu), "glp1"] for p, _ in PRICES]
+        dv = g.loc[("Branded", edu), "diet"]
+        # 95% uncertainty intervals: treatment at each price, dietary policy (the same at every price) at the right
+        ax.vlines(X + off_, [g.loc[(p, edu), "glp1_lo"] for p, _ in PRICES], [g.loc[(p, edu), "glp1_hi"] for p, _ in PRICES],
+                  color=col, lw=0.6 if small else 0.8, alpha=0.8, zorder=2)
+        ax.vlines(X[-1] + 0.25 + 0.1 * k_, g.loc[("Branded", edu), "diet_lo"], g.loc[("Branded", edu), "diet_hi"],
+                  color=col, lw=0.6 if small else 0.8, ls=(0, (2, 1)), alpha=0.8, zorder=2)
         ax.plot(
             X,
             [dv] * len(X),
@@ -265,14 +274,15 @@ def draw_slope(ax, d, scale, small=False, label=False):
         if label:
             off = 0.0
             ax.text(
-                X[-1] + 0.15,
+                X[-1] + 0.52,
                 dv + off,
                 f"{lab.split()[0]} {dv:.2f}",
                 fontsize=5.4,
                 color=col,
                 va="center",
             )
-            ax.text(
+            if tv[0] >= 0.005:                                         # a zero label would overprint the next one
+              ax.text(
                 X[0] - 0.1,
                 tv[0],
                 f"{tv[0]:.2f}",
@@ -283,12 +293,12 @@ def draw_slope(ax, d, scale, small=False, label=False):
             )
     if label:
         ax.text(
-            X[-1] + 0.12, max(g["GLP-1RA averted (thousands)"]) * 1.0, "", fontsize=5
+            X[-1] + 0.12, max(g["glp1"]) * 1.0, "", fontsize=5
         )
     ax.set_xticks(X)
     ax.set_xticklabels(
-        [l for _, l in PRICES] if not small else ["Brand", "$140", "$28"],
-        fontsize=6.4 if not small else 5.6,
+        [l for _, l in PRICES] if not small else ["Branded", "US$140", "US$28"],
+        fontsize=5.6 if not small else 5.6,
     )
     ax.set_xlim(-0.75 if label else -0.4, len(PRICES) - 1 + (1.5 if label else 0.3))
     ax.set_ylim(0, None)
@@ -297,7 +307,29 @@ def draw_slope(ax, d, scale, small=False, label=False):
     ax.set_axisbelow(True)
 
 
-draw_slope(axC, t16, 1e-3, label=True)
+
+# d: cost threshold, the factor by which the cost of the dietary package could rise before its expenditure per death
+# averted equalled that of GLP-1RA treatment at 20% coverage (deterministic, equal-budget analysis)
+bq = pd.read_csv(R(a.budget))
+CL = lambda v: min(max(v, 0.06), 40)
+for price, mk, fc, dy in [("Generic $140/yr", "o", "#00A087", 0.15), ("Generic $28/yr", "D", "white", -0.15)]:
+    x = bq[bq.price == price].set_index("ISO3")
+    for iso in ORDER:
+        if iso in x.index and pd.notna(x.loc[iso, "C"]):
+            axD.hlines(Y[iso] + dy, CL(x.loc[iso, "C_lo"]), CL(x.loc[iso, "C_hi"]), color="#00A087", lw=0.6, alpha=0.8, zorder=2)
+            axD.scatter(CL(x.loc[iso, "C"]), Y[iso] + dy, marker=mk, s=13, color=fc, edgecolor="#00A087", lw=0.6, zorder=3)
+axD.axvspan(0.05, 1, color="#FBEFEC", zorder=0)
+axD.axvline(1, color="black", lw=0.6)
+axD.set_xscale("log"); axD.set_xlim(0.05, 60)
+axD.set_xticks([0.1, 1, 10]); axD.set_xticklabels(["0.1", "1", "10"])
+axD.set_ylim(axB.get_ylim()); axD.set_yticks(y); axD.set_yticklabels([])
+for sp in ("top", "right"): axD.spines[sp].set_visible(False)
+axD.set_xlabel("Cost threshold\n(log scale)")
+axD.text(1.15, len(ORDER) - 0.15, "Diet\ncheaper →", fontsize=5.8, color="grey", va="bottom")
+axD.legend(handles=[Line2D([], [], marker="o", ls="", color="#00A087", ms=4, label="Generic US$140"),
+                    Line2D([], [], marker="D", ls="", mfc="white", mec="#00A087", ms=3.5, label="Generic US$28")],
+           loc="upper center", bbox_to_anchor=(0.45, -0.13), ncol=1, fontsize=5.8, frameon=False, handletextpad=0.2)
+draw_slope(axC, POOL, 1e-3, label=True)
 axC.set_ylabel("Deaths averted over 30 years, 19 countries combined (millions)")
 axC.set_xlabel("GLP-1RA price scenario")
 gl = (
@@ -306,15 +338,13 @@ gl = (
     ].sum()
     / 1e3
 )
-mp = pd.read_csv(R(f"{a.equity}/tableS_equity_mapping_sensitivity_v3.csv"))
-r_ = pd.to_numeric(mp["Diet-to-treatment ratio"], errors="coerce")
+r_ = pd.to_numeric(MAPU["ratio_median"], errors="coerce")
 axC.text(
-    0.98,
-    0.17,
-    f"Low education, diet /\ntreatment at US$140:\n{r_.min():.2f}–{r_.max():.2f} across\n"
-    "education–income links",
+    0.02,
+    0.985,
+    f"Low education, diet-to-\ntreatment ratio at US$140\n{r_.min():.2f}–{r_.max():.2f} across\neducation–income links",
     transform=axC.transAxes,
-    ha="right",
+    ha="left",
     va="top",
     fontsize=5.5,
     color="#444444",
@@ -358,7 +388,7 @@ axC.legend(
     title_fontsize=5.6,
 )
 
-for ax, tag, dx in [(axA, "a", -0.32), (axB, "b", -0.08), (axC, "c", -0.3)]:
+for ax, tag, dx in [(axA, "a", -0.36), (axB, "b", -0.08), (axD, "c", -0.12), (axC, "d", -0.36)]:
     ax.text(dx, 1.03, tag, transform=ax.transAxes, fontsize=12, fontweight="bold")
 os.makedirs(os.path.dirname(R(a.out)) or ".", exist_ok=True)
 fig.savefig(R(a.out) + ".pdf")
@@ -370,7 +400,7 @@ fig, axs = plt.subplots(
     5, 4, figsize=(7.4, 8.6), gridspec_kw=dict(hspace=0.6, wspace=0.35)
 )
 for ax, iso in zip(axs.flat, ORDER):
-    draw_slope(ax, t16[t16.ISO3 == iso], 1.0, small=True)
+    draw_slope(ax, EQUI[EQUI.ISO3 == iso], 1.0, small=True)
     ax.set_title(NAME.get(iso, iso), fontsize=7, pad=3)
     ax.tick_params(axis="x", labelsize=5.8)
 leg_ax = axs.flat[-1]

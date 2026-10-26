@@ -21,7 +21,9 @@ def hr_sets(s):
     return {False: hr_set("", 0.77, 0.93, 0.87), True: hr_set("_DM", 0.87, 0.93, 0.86)}
 
 
-def make_multipliers(s, HRS, dI, dS, ramp_diet, ramp_glp1):
+def make_multipliers(s, HRS, dI, dS, ramp_diet, ramp_glp1, dI_post=0.0, dS_post=0.0):
+    # with SENS_DIET_POST, dietary policy also multiplies deaths after IHD and IS onset by (1 - dI_post x phase-in x
+    # maintenance) and (1 - dS_post x ...), combined multiplicatively with the treatment effect on those deaths
 
     def mult(arm, t, k, Rt=None, dmf=False):
         m = {}
@@ -29,7 +31,12 @@ def make_multipliers(s, HRS, dI, dS, ramp_diet, ramp_glp1):
             fI = 1 - dI * s.policy_maintain * ramp(t, ramp_diet)
             fS = 1 - dS * s.policy_maintain * ramp(t, ramp_diet)
             m.update(I_fatal=fI, I_nonfatal=fI, S_fatal=fS, S_nonfatal=fS)
-        mN = dict(m)
+            if dI_post or dS_post:  # deaths after onset (SENS_DIET_POST)
+                m.update(
+                    post_I=1 - dI_post * s.policy_maintain * ramp(t, ramp_diet),
+                    post_S=1 - dS_post * s.policy_maintain * ramp(t, ramp_diet),
+                )
+        mN = {k_: v_ for k_, v_ in m.items() if k_ not in ("post_I", "post_S")}  # people without IHD or IS
         if arm in ("glp1", "combo") and k == "T":
             rt = (Rt["cv"] if Rt else s.retain) * ramp(t, ramp_glp1)
             h = HRS[bool(dmf)]
@@ -63,6 +70,9 @@ def make_multipliers(s, HRS, dI, dS, ramp_diet, ramp_glp1):
                 )
             for ch, hr in hN.items():
                 mN[ch] = mN.get(ch, 1.0) * (1 - rt * sN * (1 - hr))
+        if "post_I" in m and "post" in m:  # both arms act on deaths after onset
+            m["post_I"] *= m["post"]
+            m["post_S"] *= m["post"]
         m["_N"] = mN
         return m
 

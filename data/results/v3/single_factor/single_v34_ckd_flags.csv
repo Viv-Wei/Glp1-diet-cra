@@ -1,0 +1,9 @@
+iso3,sex,age,prevalence,capped,fallback
+NGA,Male,90-94 years,0.9916290670187786,True,False
+NGA,Male,95+ years,0.9977227900497091,True,False
+NGA,Female,85-89 years,0.991739519071831,True,False
+NGA,Female,90-94 years,0.9984622702173411,True,False
+NGA,Female,95+ years,0.9992449877611783,True,False
+ZAF,Male,95+ years,0.9916638383720476,True,False
+ZAF,Female,90-94 years,0.9968318884397448,True,False
+ZAF,Female,95+ years,0.999871758788432,True,False

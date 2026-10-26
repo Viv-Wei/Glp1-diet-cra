@@ -49,11 +49,13 @@ SECTIONS = [
                 ],
             ),
             (
-                "Effect in people with IHD or IS",
+                "Effects after disease onset",
                 "#8E1B12",
                 [
-                    ("post_A", "No effect on deaths after onset"),
+                    ("post_A", "No treatment effect on deaths after onset"),
                     ("post_C", "Nor on fatal first events"),
+                    ("diet_post_na", "Dietary sodium effect also after onset"),
+                    ("diet_post_na_wg", "Sodium and whole grain effects also after onset"),
                 ],
             ),
             (

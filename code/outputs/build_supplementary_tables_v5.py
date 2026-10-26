@@ -370,9 +370,11 @@ G = {
         "stop_x1.5": "Stopping 1.5 times as often",
         "stop_x0.5": "Stopping half as often",
     },
-    "Effect in people with IHD or IS": {
+    "Effects after disease onset": {
         "post_A": "No effect on deaths after onset",
         "post_C": "Nor on fatal first events",
+        "diet_post_na": "Dietary sodium effect also on deaths after onset",
+        "diet_post_na_wg": "Dietary sodium and whole grain effects also on deaths after onset",
     },
     "Dietary policy implementation": {
         "phase_12": "Phase-in over 12 years",
@@ -442,14 +444,16 @@ def scen_rows(df):
             if pd.notna(r.get("t20_median"))
             else [np.nan] * 3
         )
+        if pd.notna(r.r20_median) and 0 < r.r20_median < 0.05:          # dietary benefit near zero: share unstable
+            share = ["Not estimable"] * 3
         cross = (
             ["Not estimated (20% coverage only)"] * 3
             if r.scenario == "dynamic"
             else [cx(100 * r.xext_median), cx(100 * r.xext_lo), cx(100 * r.xext_hi)]
         )
-        ratio = (
-            ["See share"] * 3
-            if r.scenario == "select_like"
+        ratio = (                                                       # treatment benefit near or below zero
+            ["Not estimable"] * 3
+            if r.scenario == "select_like" or (pd.notna(r.r20_lo) and r.r20_lo <= 0)
             else [r2(r.r20_median), r2(r.r20_lo), r2(r.r20_hi)]
         )
         row = cross + ratio + [round(100 * r.P_diet_leads_20)] + share
@@ -628,6 +632,8 @@ SORT_KEYS = {
 def like_template(n, df):
 
     t = style_table(n)
+    if n == 13:                                                       # group renamed since the template
+        t["Scenario group"] = t["Scenario group"].replace({"Effect in people with IHD or IS": "Effects after disease onset"})
     if "ISO3" not in df or "ISO3" not in t:
         return df
     keys = SORT_KEYS.get(n, [])
@@ -654,6 +660,12 @@ def like_template(n, df):
     )
     rank = {k: i for i, k in enumerate(pd.unique(norm(t)))}
     df["_k"] = norm(df).map(rank)
+    if n == 13 and df["_k"].isna().any():                            # scenarios added since the template: end of their group
+        last = {}
+        for k_, v_ in rank.items():
+            last[k_.split("|")[0]] = max(last.get(k_.split("|")[0], -1), v_)
+        miss_ = df["_k"].isna(); lab_ = list(pd.unique(df.loc[miss_, "Scenario"]))
+        df.loc[miss_, "_k"] = [last[g] + 0.1 * (1 + lab_.index(x)) for g, x in zip(df.loc[miss_, "Scenario group"], df.loc[miss_, "Scenario"])]
     assert df["_k"].notna().all(), (
         n,
         "rows not found in the template",
@@ -750,6 +762,247 @@ wb._sheets = [cs] + sorted(
     [w for w in wb.worksheets if w.title != "Contents"],
     key=lambda w: int(w.title.split()[-1]),
 )
+# ---- how each table's estimates were obtained (labels and notes added after renumbering) ----------------------
+from openpyxl.styles import Alignment
+
+
+def add_note(n, text=None, at="end", replace=None):
+    """Add a sentence to a table's note: at the start, before the abbreviation list starting with `at`, or at the end."""
+    ws = wb[f"Supplementary Table {n}"]
+    c = ws.cell(ws.max_row, 1)
+    v = str(c.value or "")
+    if replace:
+        assert replace[0] in v, (n, "note text not found", replace[0][:60])
+        v = v.replace(*replace)
+    if text and at == "start":
+        v = text + " " + v
+    elif text and at != "end":
+        assert v.count(at) == 1, (n, "abbreviation list not found", at)
+        v = v.replace(at, " " + text + at)
+    elif text:
+        v = v + " " + text
+    c.value = v
+    nc = max(1, sum(1 for h in ws[2] if h.value is not None))
+    ws.row_dimensions[ws.max_row].height = max(ws.row_dimensions[ws.max_row].height or 15,
+                                                15 * (len(v) // max(60, 14 * nc) + 2))
+
+
+def relabel(n, col, old, new):
+    ws = wb[f"Supplementary Table {n}"]
+    k = 0
+    for r in range(3, ws.max_row):
+        if ws.cell(r, col).value == old:
+            ws.cell(r, col).value = new
+            k += 1
+    assert k, (n, "label not found", old)
+
+
+DRAWS300 = ("The main-analysis estimates in this table are based on the first 300 of the 1000 main-analysis simulations, "
+            "so that every scenario is compared with the same simulations. The primary estimates, based on all 1000 "
+            "simulations, are reported in Supplementary Table 7 and differ slightly.")
+relabel(12, 2, "Main analysis", "Main analysis (first 300 simulations)")
+add_note(12, DRAWS300, at=" UI, uncertainty interval.")
+add_note(13, "The combination of 100% dietary policy effect, stopping probability multiplier 1 and an 8-year phase-in "
+             "corresponds to the main analysis in these 300 simulations. " + DRAWS300.split(". ", 1)[1],
+         at=" UI, uncertainty interval.")
+DET = "Deterministic projections with central parameter values."
+for n in (10, 11):
+    add_note(n, DET, at="start")
+add_note(18, "Totals across the 19 countries exclude the rest of the world, so they are not comparable with the global "
+             "estimates in Supplementary Table 6.", at=" GLP-1RA, glucagon-like")
+relabel(21, 1, "Main analysis", "Main analysis (deterministic)")   # becomes Table 22
+add_note(21, replace=("Deterministic analyses, global totals over 30 years.",
+                    "Deterministic analyses with central parameter values, global totals over 30 years. The main-analysis "
+                    "rows therefore differ slightly from the Monte Carlo medians in Supplementary Table 6."))
+cs.cell(len(titles) + 3, 1).value = (
+    "Three kinds of estimates are reported. Main results (Supplementary Tables 6 to 9) are medians and 95% uncertainty "
+    "intervals from 1000 Monte Carlo simulations. Scenario and sensitivity analyses (Supplementary Tables 12 and 13) "
+    "use the first 300 of these simulations, with the main analysis recomputed on the same 300 simulations for "
+    "comparison. Single-factor, equity, expenditure and secondary-outcome sensitivity analyses (Supplementary Tables "
+    "10, 11 and 18 to 21) are deterministic projections with central parameter values. Small differences between "
+    "tables in the same quantity therefore reflect the number of simulations or the use of central values, not "
+    "different versions of the model.")
+r_ = len(titles) + 3
+cs.merge_cells(start_row=r_, start_column=1, end_row=r_, end_column=2)
+cs.cell(r_, 1).alignment = Alignment(wrap_text=True, vertical="top")
+cs.row_dimensions[r_].height = 75
+
+# ---- corrected education PAFs, equal-budget table and renumbering (October 2026) -------------------------------
+import copy as _copy
+EG = {"Low": 1, "Medium": 2, "High": 3}
+_v2 = pd.read_csv("data/results/v3/equity_paf_by_edu_v2.csv")
+PAF2 = {(r.outcome, r.iso3, int(r.edu)): float(r.paf) for r in _v2.itertuples()}
+# Table 15: education-specific PAFs from the corrected dose-response curves
+ws = wb["Supplementary Table 15"]; k_ = 0
+for r in range(3, ws.max_row):
+    oc, iso, g = ws.cell(r, 1).value, ws.cell(r, 3).value, ws.cell(r, 4).value
+    if g in EG:
+        ws.cell(r, 5).value = round(PAF2[(oc, iso, EG[g])], 2); k_ += 1
+assert k_ == ws.max_row - 3, ("Table 15 rows not all updated", k_)
+add_note(15, None, replace=("These are the PAF values from which the low-to-high education ratios in the preceding table are derived.",
+                            "The low-to-high education ratios in Supplementary Table 14 are the ratios of these PAFs."))
+# Table 14: central ratio of the Table 15 PAFs, intervals from 200 draws of the education gradient
+_R = pd.read_csv("data/results/v3/equity_paf_ratio_ui.csv").set_index(["outcome", "iso3"])
+_fmt = lambda v: "Not estimable" if (pd.isna(v) or not np.isfinite(v) or v > 100) else round(float(v), 3)
+ws = wb["Supplementary Table 14"]; ws.cell(2, 4).value = "Low/high education PAF ratio"; k_ = 0
+for r in range(3, ws.max_row):
+    key = (ws.cell(r, 1).value, ws.cell(r, 3).value)
+    if key in _R.index:
+        x_ = _R.loc[key]; ws.cell(r, 4).value, ws.cell(r, 5).value, ws.cell(r, 6).value = _fmt(x_.central), _fmt(x_.lo), _fmt(x_.hi); k_ += 1
+assert k_ == ws.max_row - 3, ("Table 14 rows not all updated", k_)
+add_note(14, None, replace=("Ratios are reported as medians with 95% uncertainty intervals from 200 Monte Carlo draws over the GDD "
+                            "exposure distributions, with dose-response curves held fixed.",
+                            "Ratios are the ratios of the education-specific PAFs in Supplementary Table 15, with 95% uncertainty "
+                            "intervals from 200 Monte Carlo draws over the GDD exposure distributions. Dose-response curves were held "
+                            "fixed, so these intervals reflect uncertainty in the education gradient only and are not comparable with "
+                            "the intervals of the main analysis. Upper bounds above 100, where the high-education PAF approaches zero, "
+                            "are reported as not estimable."))
+# Table 16: IHD rows recomputed with the corrected PAFs; population shares recovered from the unchanged stroke rows
+ws = wb["Supplementary Table 16"]
+rows16 = {(ws.cell(r, 1).value, ws.cell(r, 2).value, ws.cell(r, 3).value): r for r in range(3, ws.max_row) if ws.cell(r, 3).value in EG}
+share = {(iso, g): ws.cell(r, 6).value / ws.cell(r, 4).value for (oc, iso, g), r in rows16.items() if oc == "IschStroke" and ws.cell(r, 4).value}
+def _recompute(oc, write):
+    worst = 0.0
+    for iso in sorted({k[1] for k in rows16 if k[0] == oc}):
+        rs = {g: rows16[(oc, iso, g)] for g in EG if (oc, iso, g) in rows16}
+        paf = {g: PAF2[(oc, iso, EG[g])] for g in rs}; w = {g: paf[g] * share[(iso, g)] for g in rs}; tot = sum(w.values())
+        for g, r in rs.items():
+            vals = [round(paf[g], 2), round(w[g], 2), round(w[g] / tot, 3), round(w[g] / tot * ws.cell(r, 8).value / 1000, 1)]
+            if write: ws.cell(r, 4).value, ws.cell(r, 6).value, ws.cell(r, 7).value, ws.cell(r, 9).value = vals
+            else: worst = max(worst, max(abs(a - b) for a, b in zip(vals, [ws.cell(r, c).value for c in (4, 6, 7, 9)])))
+    return worst
+assert _recompute("IschStroke", write=False) <= 0.0101, "the Table 16 method does not reproduce the stroke rows"
+_recompute("IHD", write=True)
+# Table 21 (new): equal-budget comparison; the former Table 21 becomes Table 22
+old21 = wb["Supplementary Table 21"]; old21.title = "Supplementary Table 22"
+old21.cell(1, 1).value = str(old21.cell(1, 1).value).replace("Supplementary Table 21.", "Supplementary Table 22.", 1)
+bq = pd.read_csv("data/results/v3/expenditure_ui/budget_ui.csv")
+PORD = {"Branded": 0, "Generic $140/yr": 1, "Generic $28/yr": 2}
+bq = bq.assign(_c=bq.ISO3.map({k: i for i, k in enumerate(ORDER)}), _p=bq.price.map(PORD)).sort_values(["_c", "_p"])
+UI3 = lambda h: [h, "95% UI lower", "95% UI upper"]
+H21 = (["Country", "ISO3", "GLP-1RA price", "Dietary policy cost over 30 years (US$ millions)"] + UI3("Deaths averted by dietary policy")
+       + ["A. Treatment coverage bought with the dietary policy cost (% of eligible adults)"] + UI3("A. Deaths averted by that treatment")
+       + ["B. Budget, treatment at 20% coverage (US$ millions)", "B. Dietary policy cost as share of the budget (%)"]
+       + UI3("B. Deaths averted, treatment only") + ["B. Treatment coverage with the remaining budget (% of eligible adults)"]
+       + UI3("B. Deaths averted, dietary policy plus treatment") + UI3("C. Cost threshold for dietary policy"))
+NA = "Not applicable (dietary policy cost exceeds the budget)"
+def _n(v, d=0):
+    return "Not estimable" if pd.isna(v) or not np.isfinite(v) else (round(float(v)) if d == 0 else round(float(v), d))
+def _row21(r):
+    cA = "Above 100" if pd.isna(r.A_coverage) else round(100 * r.A_coverage, 1)
+    B_ = [NA] * 4 if r.diet_exceeds_budget else [round(100 * r.B_remaining_coverage, 1), _n(r.B_both), _n(r.B_both_lo), _n(r.B_both_hi)]
+    A_ = [_n(r.A_trt), _n(r.A_trt_lo), _n(r.A_trt_hi)] if pd.notna(r.A_coverage) else ["Not estimable"] * 3
+    return ([NAME.get(r.ISO3, r.ISO3), r.ISO3, r.price, round(r.diet_cost_musd, 1), _n(r.diet), _n(r.diet_lo), _n(r.diet_hi), cA] + A_
+            + [round(r.B_budget_musd, 1), round(100 * r.B_diet_share, 1), _n(r.B_trt), _n(r.B_trt_lo), _n(r.B_trt_hi)] + B_
+            + [_n(r.C, 2), _n(r.C_lo, 2), _n(r.C_hi, 2)])
+ws21 = wb.create_sheet("Supplementary Table 21", index=wb.sheetnames.index("Supplementary Table 22"))
+src = wb["Supplementary Table 20"]
+def _style(dst, s_):
+    dst.font, dst.fill, dst.alignment, dst.border = _copy.copy(s_.font), _copy.copy(s_.fill), _copy.copy(s_.alignment), _copy.copy(s_.border)
+    dst.number_format = s_.number_format
+STY = {k: src.cell(*rc) for k, rc in dict(title=(1, 1), head=(2, 1), data=(3, 1), note=(src.max_row, 1)).items()}
+def write_table(ws, title, header, rows, note, widths=None, head_h=75):
+    """Write a supplementary table sheet in the house style (title, header, rows, note)."""
+    for rng in list(ws.merged_cells.ranges): ws.unmerge_cells(str(rng))
+    if ws.max_row: ws.delete_rows(1, ws.max_row)
+    ws.cell(1, 1, title); _style(ws.cell(1, 1), STY["title"]); ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(header))
+    for jj, h in enumerate(header, 1): ws.cell(2, jj, h); _style(ws.cell(2, jj), STY["head"])
+    ws.row_dimensions[2].height = head_h
+    for ii, row in enumerate(rows, 3):
+        for jj, v in enumerate(row, 1): ws.cell(ii, jj, v); _style(ws.cell(ii, jj), STY["data"])
+    lr = len(rows) + 3; ws.cell(lr, 1, note); _style(ws.cell(lr, 1), STY["note"])
+    ws.merge_cells(start_row=lr, start_column=1, end_row=lr, end_column=len(header))
+    ws.row_dimensions[lr].height = max(60, 15 * (len(note) // (14 * len(header)) + 2))
+    for jj, w in enumerate(widths or [], 1): ws.column_dimensions[ws.cell(2, jj).column_letter].width = w
+T21 = "Supplementary Table 21. Equal-budget comparison of dietary policy and GLP-1RA treatment, by country and GLP-1RA price"
+UINOTE = ("Medians and 95% uncertainty intervals from 1000 simulations. Expenditure is at central parameter values and deaths "
+          "averted come from each simulation, so the intervals reflect uncertainty in the health effects, and ratios are "
+          "computed within each simulation.")
+leg = (UINOTE + " Expenditure was calculated as in Supplementary Table 20, treatment paying only for time on drug and dietary "
+       "policy costing US$0.55 per adult per year, over 30 years without discounting. Deaths are deaths from IHD and ischaemic "
+       "stroke averted over 30 years. A, the GLP-1RA coverage of eligible adults whose 30-year expenditure equals the cost of "
+       "the dietary package, and the deaths it would avert. B, the expenditure of treatment at 20% coverage spent on treatment "
+       "alone, or on the dietary package first with the remainder on treatment, using the combination of the two under "
+       "independent action. C, the factor by which the cost of the dietary package could rise before its expenditure per death "
+       "averted equalled that of treatment at 20% coverage, equal to the treatment-to-diet ratio in Supplementary Table 20. "
+       "Coverage was not limited to the maximum affordable level, because the programme is assumed to be publicly financed, and "
+       "deaths were interpolated between the coverage levels of the Monte Carlo analysis. GLP-1RA, glucagon-like peptide-1 "
+       "receptor agonist; IHD, ischaemic heart disease; UI, uncertainty interval.")
+write_table(ws21, T21, H21, [_row21(r) for r in bq.itertuples()], leg, widths=[22, 7, 14, 13] + [12] * 23)
+# contents: the new table and the renumbered one, and the general note
+r22 = next(r for r in range(2, cs.max_row + 1) if cs.cell(r, 1).value == "Supplementary Table 21")
+cs.cell(r22 + 1, 1).value, cs.cell(r22 + 1, 2).value = "Supplementary Table 22", cs.cell(r22, 2).value
+cs.cell(r22, 2).value = T21.split(". ", 1)[1]
+for c in (1, 2): _style(cs.cell(r22 + 1, c), cs.cell(r22, c))
+note_r = next(r for r in range(2, cs.max_row + 1) if str(cs.cell(r, 1).value or "").startswith("Three kinds of estimates"))
+txt = ("Three kinds of estimates are reported. Main results (Supplementary Tables 6 to 9, 20 and 21) are medians and 95% "
+       "uncertainty intervals from 1000 Monte Carlo simulations, with expenditure in Supplementary Tables 20 and 21 at central "
+       "parameter values. Scenario, sensitivity and education analyses (Supplementary Tables 12, 13, 18 and 19) use the first "
+       "300 of these simulations, with the main analysis recomputed on the same 300 simulations for comparison. Single-factor "
+       "rankings and the secondary-outcome sensitivity analyses (Supplementary Tables 10, 11 and 22) are deterministic "
+       "projections with central parameter values. Small differences between tables in the same quantity therefore reflect "
+       "the number of simulations or the use of central values, not different versions of the model.")
+for rng in list(cs.merged_cells.ranges):
+    if rng.min_row == note_r: cs.unmerge_cells(str(rng))
+cs.cell(note_r, 1).value = None; cs.cell(note_r + 1, 1).value = txt
+cs.merge_cells(start_row=note_r + 1, start_column=1, end_row=note_r + 1, end_column=2)
+cs.cell(note_r + 1, 1).alignment = Alignment(wrap_text=True, vertical="top"); cs.row_dimensions[note_r + 1].height = 80
+# notes that pre-empt arithmetic on summarised values
+add_note(8, "Within each simulation, the combination under independent action averted slightly fewer deaths than the sum of "
+            "the two interventions alone, because they partly act on the same people. Its median can nonetheless exceed the "
+            "sum of the separate medians, because medians are not additive.", at=" CKD, chronic kidney disease;")
+add_note(12, "Where the treatment benefit was close to or below zero in some simulations, the diet-to-treatment ratio is not "
+             "estimable and the treatment benefit as a percentage of the dietary benefit should be read instead, and where the "
+             "dietary benefit was close to zero the percentage is not estimable.", at=" UI, uncertainty interval.")
+
+# ---- uncertainty intervals for the education, expenditure and sensitivity tables (Tables 18-20) ------------------
+PRORD = {"Branded": 0, "Generic $140/yr": 1, "Generic $28/yr": 2}; EORD = {"Low education": 0, "Medium education": 1, "High education": 2}
+def _note(n): ws_ = wb[f"Supplementary Table {n}"]; return str(ws_.cell(ws_.max_row, 1).value or "")
+def _r(v, d):
+    return "Not estimable" if pd.isna(v) or not np.isfinite(v) else round(float(v), d)
+# Table 18: deaths averted by education group
+eq = pd.read_csv("data/results/v3/equity_mc/equity_ui.csv")
+eq = eq.assign(_c=eq.ISO3.map({k: i for i, k in enumerate(ORDER)}), _p=eq["Price scenario"].map(PRORD), _e=eq["Education group"].map(EORD)).sort_values(["_c", "_p", "_e"])
+H18 = (["Country", "Price scenario", "ISO3", "Education group", "Population share (25+)", "PAF ratio", "Affordable fraction"]
+       + UI3("Dietary policy averted (thousands)") + UI3("GLP-1RA averted if affordable to all (thousands)")
+       + UI3("GLP-1RA averted (thousands)") + UI3("Diet-to-treatment ratio"))
+def _row18(r):
+    rat = (["Treatment not affordable"] * 3 if r.glp1_median == 0 else [_r(r.ratio_median, 2), _r(r.ratio_lo, 2), _r(r.ratio_hi, 2)])
+    return ([NAME.get(r.ISO3, r.ISO3), r[0], r.ISO3, r[2], r[3], r[4], r[5]]
+            + [_r(r.diet_median, 2), _r(r.diet_lo, 2), _r(r.diet_hi, 2), _r(r.glp1_all_median, 2), _r(r.glp1_all_lo, 2), _r(r.glp1_all_hi, 2),
+               _r(r.glp1_median, 2), _r(r.glp1_lo, 2), _r(r.glp1_hi, 2)] + rat)
+n18 = _note(18)
+assert "Treatment at 20% coverage of eligible adults." in n18
+n18 = n18.replace("Treatment at 20% coverage of eligible adults.",
+                  "Treatment at 20% coverage of eligible adults. Medians and 95% uncertainty intervals from the first 300 simulations of "
+                  "the main analysis, with education-specific PAFs, population shares, affordability and the education-income link at "
+                  "central values, and ratios computed within each simulation.")
+write_table(wb["Supplementary Table 18"], str(wb["Supplementary Table 18"].cell(1, 1).value), H18,
+            [_row18(r) for r in eq.drop(columns=["_c", "_p", "_e"]).itertuples(index=False)], n18, widths=[18, 14, 7, 16, 11, 9, 11] + [11] * 12)
+# Table 19: sensitivity to the education-income link
+mp = pd.read_csv("data/results/v3/equity_mc/mapping_ui.csv")
+H19 = (["Education-income link"] + UI3("Dietary policy, low education (thousands)") + UI3("GLP-1RA, low education (thousands)")
+       + UI3("Diet-to-treatment ratio") + ["Countries with no treatment benefit"])
+rows19 = [[r["Education-income link"], _r(r.diet_median, 0), _r(r.diet_lo, 0), _r(r.diet_hi, 0), _r(r.glp1_median, 0), _r(r.glp1_lo, 0),
+           _r(r.glp1_hi, 0), _r(r.ratio_median, 2), _r(r.ratio_lo, 2), _r(r.ratio_hi, 2), r["Countries with no treatment benefit"]] for _, r in mp.iterrows()]
+write_table(wb["Supplementary Table 19"], str(wb["Supplementary Table 19"].cell(1, 1).value), H19, rows19,
+            "Medians and 95% uncertainty intervals from the first 300 simulations of the main analysis, with ratios computed within "
+            "each simulation. " + _note(19), widths=[34] + [12] * 9 + [20])
+# Table 20: expenditure per death averted
+cu = pd.read_csv("data/results/v3/expenditure_ui/cost_ui.csv")
+CORD = {"10%": 0, "20%": 1, "Maximum affordable": 2}; OORD = {"IHD + IS": 0, "IHD + IS + CKD": 1}
+cu = cu.assign(_c=cu.ISO3.map({k: i for i, k in enumerate(ORDER)}), _p=cu.price.map(PRORD), _v=cu.coverage.map(CORD), _o=cu.outcomes.map(OORD)).sort_values(["_c", "_p", "_v", "_o"])
+H20 = (["Country", "ISO3", "Price scenario", "Outcomes", "Coverage of eligible adults", "Enrolled person-years (millions)",
+        "Paying person-years (millions)"] + UI3("GLP-1RA expenditure per death averted (USD)")
+       + UI3("Dietary policy expenditure per death averted (USD)") + UI3("Ratio, treatment to diet"))
+rows20 = [[NAME.get(r.ISO3, r.ISO3), r.ISO3, r.price, r.outcomes, r.coverage, round(r.enrolled_py_m, 2), round(r.paying_py_m, 2),
+           _r(r.trt_pd, 0), _r(r.trt_pd_lo, 0), _r(r.trt_pd_hi, 0), _r(r.diet_pd, 0), _r(r.diet_pd_lo, 0), _r(r.diet_pd_hi, 0),
+           _r(r.ratio, 1), _r(r.ratio_lo, 1), _r(r.ratio_hi, 1)] for r in cu.itertuples()]
+n20 = (UINOTE + " In one of the 1000 simulations, treatment averted no deaths in some countries because the sampled hazard ratios "
+       "were above 1, and its expenditure per death averted was then counted as unbounded. " + _note(20))
+write_table(wb["Supplementary Table 20"], str(wb["Supplementary Table 20"].cell(1, 1).value), H20, rows20, n20,
+            widths=[18, 7, 14, 14, 12, 11, 11] + [12] * 9)
+
 os.makedirs(os.path.dirname(A.out) or ".", exist_ok=True)
 wb.save(A.out)
 print(

@@ -142,6 +142,12 @@ def worker(a):
                 f"draw {a.draw} cov {a.cov} failed: {p.stderr[-300:]}", file=sys.stderr
             )
             return
+        kb = os.environ.get("MC_KEEP_BYAGE")  # keep deaths averted by age (education analysis)
+        if kb:
+            import shutil
+
+            os.makedirs(kb, exist_ok=True)
+            shutil.copyfile(o[:-4] + "_byage.csv", f"{kb}/d{a.draw}_c{a.cov}_byage.csv")
         t = pd.read_csv(o)
         t = t[t.outcome.isin(["IHD", "IschStroke"])]
         yr = [c for c in t.columns if c.startswith("yr")]

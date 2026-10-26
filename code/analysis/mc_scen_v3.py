@@ -68,6 +68,8 @@ def scenarios():
         S[dsc] = dict(diet=dsc)
     S["cap"] = dict(env=dict(SENS_CAP_REF="USA"))
     S["tailored_cap"] = dict(env=dict(SENS_CAP_REF="USA"), diet="tailored")
+    S["diet_post_na"] = dict(env=dict(SENS_DIET_POST="post_na"))  # dietary effect also after onset: sodium
+    S["diet_post_na_wg"] = dict(env=dict(SENS_DIET_POST="post_na_wg"))  # sodium and whole grains
     S["select_like"] = dict(
         env=dict(SENS_SELECT_LIKE="1"),
         hr={"": ((0.72, 0.61, 0.85), (0.93, 0.74, 1.15), (0.85, 0.71, 1.01))},

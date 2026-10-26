@@ -97,6 +97,9 @@ def main(a):
         else {}
     )
     dp = dietary_pif(s.dp_file, a.diet_scenario)
+    dpp = dietary_pif(s.dp_file, s.diet_post) if s.diet_post else None  # dietary effect after onset (SENS_DIET_POST)
+    if s.diet_post and s.cap_ref:
+        raise SystemExit("[error] SENS_DIET_POST cannot be combined with SENS_CAP_REF (both set the effect on deaths after onset)")
     conv = lambda g0: s.k_dur * g0 / (1 - g0 + s.k_dur * g0)
     seltab = pd.read_csv(s.select_file) if s.select_like else None
     selb = (
@@ -187,6 +190,11 @@ def main(a):
             float(dp.get(("IschStroke", iso), 0.0)),
             a.ramp_diet,
             a.ramp_glp1,
+            *(
+                (float(dpp.get(("IHD", iso), 0.0)), float(dpp.get(("IschStroke", iso), 0.0)))
+                if dpp is not None
+                else ()
+            ),
         )
         init, C_sel = initial_states(
             iso, base, eg, a.coverage, s.select_like, seltab, s.bmi_min, s.dm_pr, checks

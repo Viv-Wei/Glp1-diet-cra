@@ -60,6 +60,7 @@ def read_settings(coverage):
     s.select_file = E("SENS_SELECT_FILE", "data/params/select_elig.csv")
     s.coverage = coverage
     s.policy_maintain = float(E("SENS_POLICY_MAINTAIN", 1.0))
+    s.diet_post = E("SENS_DIET_POST")  # dietary scenario whose effect also applies to deaths after onset
     s.dp_file = E("LT_DP_OVERRIDE", "data/results/v3/diet_policy_arm_v2_tailored.csv")
     s.t2d_out = E("SENS_T2D", "1") == "1"
     s.t2d_params = E("T2D_TRIAL_PARAMS", "data/params/glp1_trial_params.csv")
