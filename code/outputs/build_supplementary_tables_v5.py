@@ -884,7 +884,7 @@ H21 = (["Country", "ISO3", "GLP-1RA price", "Dietary policy cost over 30 years (
        + ["A. Treatment coverage bought with the dietary policy cost (% of eligible adults)"] + UI3("A. Deaths averted by that treatment")
        + ["B. Budget, treatment at 20% coverage (US$ millions)", "B. Dietary policy cost as share of the budget (%)"]
        + UI3("B. Deaths averted, treatment only") + ["B. Treatment coverage with the remaining budget (% of eligible adults)"]
-       + UI3("B. Deaths averted, dietary policy plus treatment") + UI3("C. Cost threshold for dietary policy"))
+       + UI3("B. Deaths averted, dietary policy plus treatment") + UI3("C. Deaths averted per dollar, dietary policy relative to treatment"))
 NA = "Not applicable (dietary policy cost exceeds the budget)"
 def _n(v, d=0):
     return "Not estimable" if pd.isna(v) or not np.isfinite(v) else (round(float(v)) if d == 0 else round(float(v), d))
@@ -923,8 +923,9 @@ leg = (UINOTE + " Expenditure was calculated as in Supplementary Table 20, treat
        "stroke averted over 30 years. A, the GLP-1RA coverage of eligible adults whose 30-year expenditure equals the cost of "
        "the dietary package, and the deaths it would avert. B, the expenditure of treatment at 20% coverage spent on treatment "
        "alone, or on the dietary package first with the remainder on treatment, using the combination of the two under "
-       "independent action. C, the factor by which the cost of the dietary package could rise before its expenditure per death "
-       "averted equalled that of treatment at 20% coverage, equal to the treatment-to-diet ratio in Supplementary Table 20. "
+       "independent action. C, deaths averted per dollar spent by dietary policy relative to treatment at 20% coverage, which equals "
+       "the treatment-to-diet ratio of expenditure per death averted in Supplementary Table 20, and is also the factor by which "
+       "the cost of the package could rise before treatment became cheaper per death averted. "
        "Coverage was not limited to the maximum affordable level, because the programme is assumed to be publicly financed, and "
        "deaths were interpolated between the coverage levels of the Monte Carlo analysis. GLP-1RA, glucagon-like peptide-1 "
        "receptor agonist; IHD, ischaemic heart disease; UI, uncertainty interval.")
@@ -955,6 +956,8 @@ add_note(12, "Where the treatment benefit was close to or below zero in some sim
              "estimable and the treatment benefit as a percentage of the dietary benefit should be read instead, and where the "
              "dietary benefit was close to zero the percentage is not estimable.", at=" UI, uncertainty interval.")
 
+add_note(5, "Negative single-factor estimates, which GBD 2023 gives for red meat and some stroke types, were counted as "
+            "zero for each outcome.", at=" CV, cardiovascular;")
 # ---- uncertainty intervals for the education, expenditure and sensitivity tables (Tables 18-20) ------------------
 PRORD = {"Branded": 0, "Generic $140/yr": 1, "Generic $28/yr": 2}; EORD = {"Low education": 0, "Medium education": 1, "High education": 2}
 def _note(n): ws_ = wb[f"Supplementary Table {n}"]; return str(ws_.cell(ws_.max_row, 1).value or "")
@@ -992,16 +995,207 @@ write_table(wb["Supplementary Table 19"], str(wb["Supplementary Table 19"].cell(
 cu = pd.read_csv("data/results/v3/expenditure_ui/cost_ui.csv")
 CORD = {"10%": 0, "20%": 1, "Maximum affordable": 2}; OORD = {"IHD + IS": 0, "IHD + IS + CKD": 1}
 cu = cu.assign(_c=cu.ISO3.map({k: i for i, k in enumerate(ORDER)}), _p=cu.price.map(PRORD), _v=cu.coverage.map(CORD), _o=cu.outcomes.map(OORD)).sort_values(["_c", "_p", "_v", "_o"])
-H20 = (["Country", "ISO3", "Price scenario", "Outcomes", "Coverage of eligible adults", "Enrolled person-years (millions)",
+H20 = (["Country", "ISO3", "Price scenario", "Outcomes", "Coverage of eligible adults", "Discounting", "Enrolled person-years (millions)",
         "Paying person-years (millions)"] + UI3("GLP-1RA expenditure per death averted (USD)")
        + UI3("Dietary policy expenditure per death averted (USD)") + UI3("Ratio, treatment to diet"))
-rows20 = [[NAME.get(r.ISO3, r.ISO3), r.ISO3, r.price, r.outcomes, r.coverage, round(r.enrolled_py_m, 2), round(r.paying_py_m, 2),
+rows20 = [[NAME.get(r.ISO3, r.ISO3), r.ISO3, r.price, r.outcomes, r.coverage, "None", round(r.enrolled_py_m, 2), round(r.paying_py_m, 2),
            _r(r.trt_pd, 0), _r(r.trt_pd_lo, 0), _r(r.trt_pd_hi, 0), _r(r.diet_pd, 0), _r(r.diet_pd_lo, 0), _r(r.diet_pd_hi, 0),
            _r(r.ratio, 1), _r(r.ratio_lo, 1), _r(r.ratio_hi, 1)] for r in cu.itertuples()]
-n20 = (UINOTE + " In one of the 1000 simulations, treatment averted no deaths in some countries because the sampled hazard ratios "
+_fd = "data/results/v3/expenditure_ui/cost_ui_disc3.csv"
+if os.path.exists(_fd):                                   # costs and deaths discounted at 3% a year (300 simulations)
+    cd_ = pd.read_csv(_fd); py_ = {(r.ISO3, r.price, r.coverage): (round(r.enrolled_py_m, 2), round(r.paying_py_m, 2)) for r in cu[cu.outcomes == "IHD + IS"].itertuples()}
+    pos = {(r[1], r[2], r[4], r[3]): i for i, r in enumerate(rows20)}
+    for r in cd_.itertuples():
+        e_, p_ = py_[(r.ISO3, r.price, r.coverage)]
+        new = [NAME.get(r.ISO3, r.ISO3), r.ISO3, r.price, "IHD + IS", r.coverage, "3% a year", e_, p_, _r(r.trt_pd, 0), _r(r.trt_pd_lo, 0),
+               _r(r.trt_pd_hi, 0), _r(r.diet_pd, 0), _r(r.diet_pd_lo, 0), _r(r.diet_pd_hi, 0), _r(r.ratio, 1), _r(r.ratio_lo, 1), _r(r.ratio_hi, 1)]
+        k0 = pos.get((r.ISO3, r.price, r.coverage, "IHD + IS + CKD"))
+        rows20.insert(k0 + 1 if k0 is not None else len(rows20), new); pos = {(x[1], x[2], x[4], x[3] if x[5] == "None" else "disc"): i for i, x in enumerate(rows20)}
+    print(f"Table 20: {len(cd_)} discounted rows added")
+n20 = ("Rows without discounting are medians and 95% uncertainty intervals from 1000 simulations, and rows with costs and deaths "
+       "discounted at 3% a year (mid-year) from the first 300, as in the discounting scenario. " if os.path.exists(_fd) else "")
+n20 = (n20 + (UINOTE.replace("Medians and 95% uncertainty intervals from 1000 simulations. ", "") if n20 else UINOTE) + " In one of the 1000 simulations, treatment averted no deaths in some countries because the sampled hazard ratios "
        "were above 1, and its expenditure per death averted was then counted as unbounded. " + _note(20))
 write_table(wb["Supplementary Table 20"], str(wb["Supplementary Table 20"].cell(1, 1).value), H20, rows20, n20,
-            widths=[18, 7, 14, 14, 12, 11, 11] + [12] * 9)
+            widths=[18, 7, 14, 14, 12, 11, 11, 11] + [12] * 9)
+
+# ---- review of the supplementary tables (October 2026): sources as footnote markers, notes, panels -------------
+def _setnote(n, txt):
+    ws_ = wb[f"Supplementary Table {n}"]; ws_.cell(ws_.max_row, 1).value = txt
+def _rows(n):
+    ws_ = wb[f"Supplementary Table {n}"]; return ws_, [[c.value for c in r] for r in ws_.iter_rows(min_row=3, max_row=ws_.max_row - 1)]
+# Table 1: sources as footnote markers, full references in the note
+SRC1 = {"WHO guideline 2025; Galli et al, JACC 2025": "WHO guideline†; meta-analysis*",
+        "Product labelling; SELECT": "Product labelling‡; SELECT trial§",
+        "Product labelling": "Product labelling‡",
+        "Product labelling; WHO 2025": "Product labelling‡; WHO guideline†",
+        "Galli et al, JACC 2025, Supplementary Figure S27, adults without diabetes": "Meta-analysis*, adults without diabetes",
+        "Galli et al, JACC 2025, Supplementary Figure S27, adults with diabetes": "Meta-analysis*, adults with diabetes",
+        "SELECT glycaemia analysis (Kahn et al, Diabetes Care 2024)": "SELECT glycaemia analysis¶",
+        "Network meta-analysis, Clin Obes 2025": "Network meta-analysis‖",
+        "Rodriguez et al, JAMA Netw Open 2025": "US cohort of adults using GLP-1RA**",
+        "Derived from Rodriguez et al, JAMA Netw Open 2025 (two-year cumulative values)": "Derived from US cohort** (two-year cumulative values)",
+        "Weight regain after withdrawal of semaglutide (Wilding et al, Diabetes Obes Metab 2022; Rubino et al, JAMA 2021)": "Weight regain after withdrawal of semaglutide††‡‡",
+        "Emerging Risk Factors Collaboration, Lancet 2010": "Collaborative meta-analysis of prospective studies§§",
+        "Assumption (scenarios in Figure 5)": "Assumption, varied in scenario analyses",
+        "Assumption; correction using time on drug in SELECT in sensitivity analysis (Figure 5)": "Assumption, with a correction for time on drug in SELECT in a sensitivity analysis"}
+ws_, rr = _rows(1); col = [c.value for c in ws_[2]].index("Source") + 1; k_ = 0
+for i in range(3, ws_.max_row):
+    v = ws_.cell(i, col).value
+    if v in SRC1: ws_.cell(i, col).value = SRC1[v]; k_ += 1
+assert k_ == 21, ("Table 1 source cells converted", k_)
+REF1 = ("*Galli M, Benenati S, Laudani C, et al. Cardiovascular effects and tolerability of GLP-1 receptor agonists, a systematic "
+        "review and meta-analysis of 99,599 patients. J Am Coll Cardiol 2025;86:1805-19 (supplementary figure S27). "
+        "†Celletti F, Farrar J, De Regil L. World Health Organization guideline on the use and indications of glucagon-like peptide-1 "
+        "therapies for the treatment of obesity in adults. JAMA 2026;335:434-8. "
+        "‡Novo Nordisk. Wegovy (semaglutide) injection, prescribing information. "
+        "§Lincoff AM, Brown-Frandsen K, Colhoun HM, et al. Semaglutide and cardiovascular outcomes in obesity without diabetes. "
+        "N Engl J Med 2023;389:2221-32. "
+        "¶Kahn SE, Deanfield JE, Jeppesen OK, et al. Effect of semaglutide on regression and progression of glycemia in people with "
+        "overweight or obesity but without diabetes in the SELECT trial. Diabetes Care 2024;47:1350-9. "
+        "‖Ali A, Siddiqui AA, Usman MS, et al. Effect of glucagon-like peptide 1 receptor agonists on systolic blood pressure in "
+        "patients with obesity, with or without diabetes, a systematic review and network meta-analysis. Clin Obes 2025. "
+        "**Rodriguez PJ, Zhang V, Gratzl S, et al. Discontinuation and reinitiation of dual-labeled GLP-1 receptor agonists among US "
+        "adults with overweight or obesity. JAMA Netw Open 2025;8:e2457349. "
+        "††Wilding J, Batterham RL, Davies M, et al. Weight regain and cardiometabolic effects after withdrawal of semaglutide, the "
+        "STEP 1 trial extension. Diabetes Obes Metab 2022;24:1553-64. "
+        "‡‡Rubino D, Abrahamsson N, Davies M, et al. Effect of continued weekly subcutaneous semaglutide vs placebo on weight loss "
+        "maintenance in adults with overweight or obesity, the STEP 4 randomized clinical trial. JAMA 2021;325:1414-25. "
+        "§§Emerging Risk Factors Collaboration. Diabetes mellitus, fasting blood glucose concentration, and risk of vascular disease, "
+        "a collaborative meta-analysis of 102 prospective studies. Lancet 2010;375:2215-22.")
+n1 = _note(1); _setnote(1, n1 + " " + REF1)
+# Table 2: external benchmarking rather than validation
+ws_ = wb["Supplementary Table 2"]; ws_.cell(1, 1).value = str(ws_.cell(1, 1).value).replace("Calibration and validation", "Calibration and external benchmarking")
+for i in range(3, ws_.max_row):
+    for j in range(1, ws_.max_column + 1):
+        v = ws_.cell(i, j).value
+        if isinstance(v, str):
+            v2 = v.replace("Persistence reconstruction (Rodriguez 2025)", "Persistence reconstruction*").replace("External validation", "External benchmarking").replace("external validation", "external benchmarking")
+            ws_.cell(i, j).value = v2
+n2 = _note(2).replace("External validation simulated", "External benchmarking simulated")
+_setnote(2, n2 + " This comparison checks that the modelled magnitude is plausible and is not a formal external validation, because "
+         "the populations and end points are not fully matched. *Rodriguez PJ, Zhang V, Gratzl S, et al. Discontinuation and "
+         "reinitiation of dual-labeled GLP-1 receptor agonists among US adults with overweight or obesity. JAMA Netw Open 2025;8:e2457349.")
+# Table 3: why dietary multipliers are independent across outcomes and shared across countries
+add_note(3, "Dietary multipliers were drawn independently for each outcome because GBD 2023 estimates the dose-response uncertainty "
+            "separately for each outcome, and were shared across countries because the same dose-response curves apply to every "
+            "country.", at=" CKD, chronic kidney dise")
+# Table 14: the not-estimable sentence generated from the values shown
+ws_ = wb["Supplementary Table 14"]; ne_ = {}
+for i in range(3, ws_.max_row):
+    vals = [ws_.cell(i, j).value for j in (4, 5, 6)]
+    if "Not estimable" in vals: ne_[ws_.cell(i, 2).value] = [nm for nm, v in zip(("ratio", "lower bound", "upper bound"), vals) if v == "Not estimable"]
+n14 = _note(14); old14 = ("For CKD in Bangladesh, Egypt, Nigeria, and South Africa, the upper uncertainty bound is not estimable because the "
+                          "high-education PAF approaches zero in some draws; dietary effects on CKD act through sodium only.")
+assert old14 in n14, "Table 14 note sentence not found"
+desc = " and ".join(f"the {' and '.join(v)} in {c}" for c, v in ne_.items())
+n14 = n14.replace(old14, f"For CKD, {desc} are not estimable because the high-education PAF is zero or approaches zero in some draws. "
+                  "Dietary effects on CKD act through sodium only.")
+_setnote(14, n14)
+# Table 16: allocation formula, ISO3 and country names
+ws_, rr = _rows(16); hdr16 = [c.value for c in ws_[2]]
+H16 = ["Outcome", "Country", "ISO3"] + hdr16[2:]
+rows16 = [[r[0], NAME.get(r[1], r[1]), r[1]] + r[2:] for r in rr]
+n16 = _note(16)
+old16 = "Attributable deaths in each education group were estimated as group PAF x group population share x total deaths from each outcome."
+assert old16 in n16, "Table 16 note sentence not found"
+n16 = n16.replace(old16, "Attributable deaths in each education group were allocated from the national total in proportion to the group PAF "
+                  "multiplied by the group population share, that is, deaths in group g = national attributable deaths x PAF(g) x share(g) / "
+                  "sum over groups of PAF x share.")
+write_table(ws_, str(ws_.cell(1, 1).value), H16, rows16, n16, widths=[12, 18, 7, 16, 12, 12, 14, 12, 14, 14])
+# Table 17: rebuilt from the affordability matrix and the price file (self-pay prices, October 2026)
+ws_ = wb["Supplementary Table 17"]; t17_title = str(ws_.cell(1, 1).value)
+am = pd.read_csv("data/results/affordability_matrix.csv"); pr = pd.read_csv("data/params/glp1_prices.csv").set_index("iso3")
+am = am.assign(_c=am.iso3.map({k: i for i, k in enumerate(ORDER)})).sort_values(["_c", "quintile"])
+def _pen(iso):
+    r_ = pr.loc[iso]
+    return "Not launched" if r_.price_type == "Imputed" else f"{r_.currency} {r_.price_per_pen_lcu:,.2f}"
+H17 = ["Country", "ISO3", "Income quintile", "Per-capita income (USD)", "Branded price per pen (local currency)", "Branded annual cost (USD)",
+       "Branded price basis", "Branded cost as share of income (%)", "Generic upper bound ($140/yr) as share of income (%)",
+       "Generic lower bound ($28/yr) as share of income (%)"]
+rows17 = [[NAME.get(r.iso3, r.iso3), r.iso3, r.quintile, round(r.income_pc_usd), _pen(r.iso3), int(r.brand_annual_usd), pr.loc[r.iso3, "price_type"],
+           r.afford_brand_pct, r.afford_generic_hi_pct, r.afford_generic_lo_pct] for r in am.itertuples()]
+src = "; ".join(f"{NAME.get(i_, i_)}, {pr.loc[i_, 'source_note']}" for i_ in sorted(pr.index, key=lambda k: NAME.get(k, k)))
+n17 = ("Per-capita income by quintile was estimated from World Bank income quintile shares (2022-2024) multiplied by GNI per capita "
+       "(Atlas method, 2025). Branded prices are those paid by a self-paying patient for semaglutide 2.4 mg, one pen of four weekly doses, "
+       "accessed on 27 October 2026, with 13 pens a year, and were converted to US dollars at European Central Bank reference rates of "
+       "26 October 2026 (Brazil, 23 October 2026, and Egypt, the approximate official rate). Prices were taken from official price lists "
+       "where available and otherwise from pharmacy or clinic retail prices, including value added tax where it applies. In Bangladesh "
+       "and Nigeria, where the drug has not been launched, prices were imputed. Generic price bounds (US$140 a year upper, US$28 a year "
+       "lower) are from a production-cost analysis (Levi et al, Obesity 2026). Affordability was defined as an annual treatment cost not "
+       "exceeding 10% of estimated per-capita income within each income quintile. This study-specific threshold is not a measure of "
+       "catastrophic health expenditure under WHO definitions, which relate household out-of-pocket health spending to household "
+       "consumption or discretionary budget. Income quintile Q1 is the poorest 20% and Q5 is the richest 20%. IND and NGA quintile incomes "
+       "are derived from consumption surveys and may conservatively overestimate affordability for Q1-Q2. Price sources: " + src + ". "
+       "GNI, gross national income; GLP-1RA, glucagon-like peptide-1 receptor agonist.")
+write_table(ws_, t17_title, H17, rows17, n17, widths=[18, 7, 10, 13, 16, 13, 24, 14, 16, 16])
+# references to figures in the notes (tables must be readable on their own)
+for n, old, new in [
+        (5, "These values give the dietary composition in Figure 1c and the share of the burden targeted by the feasible package (sodium, whole grains and sugar-sweetened beverages) in Figure 4.",
+            "These values give the dietary composition of the burden and the share targeted by the feasible package (sodium, whole grains and sugar-sweetened beverages)."),
+        (12, "Scenarios are defined in the Methods and shown in Figure 5. ", ""),
+        (14, "CKD is excluded from Figure 6a because of unstable educational gradients but is included here for completeness.",
+            "Educational gradients for CKD are less stable than for the other outcomes."),
+        (21, "Expenditure was calculated as in Supplementary Table 20, treatment paying only", "Expenditure was calculated with treatment paying only"),
+        (1, ", following the evidence hierarchy described in the Methods.", "."),
+        (1, " (see the table of parameters varied)", ""),
+        (1, " (see the calibration and validation table)", "")]:
+    t_ = _note(n)
+    if old in t_: _setnote(n, t_.replace(old, new))
+    else: print(f"[warning] Table {n}: sentence not found: {old[:60]}")
+
+# Table 8: uncertainty intervals of the multiple for T2D and CKD, when available
+fo = "data/results/v3/overlap/overlap_ui_t2dckd.csv"
+if os.path.exists(fo):
+    ou = pd.read_csv(fo); OUT = {"Incident type 2 diabetes cases": "T2D", "Deaths from CKD": "CKD"}
+    U = {(r.outcome, r.iso3, r.coverage, int(r.overlap_pct)): (r.mult_lo, r.mult_hi) for r in ou.itertuples()}
+    ws_ = wb["Supplementary Table 8"]; h8 = [c.value for c in ws_[2]]; jl, jh = h8.index("Multiple, 95% UI lower") + 1, h8.index("Multiple, 95% UI upper") + 1; k_ = 0
+    for i in range(3, ws_.max_row):
+        o_ = OUT.get(ws_.cell(i, 3).value)
+        if o_:
+            lo, hi = U[(o_, ws_.cell(i, 2).value, ws_.cell(i, 4).value, int(ws_.cell(i, 5).value))]
+            ws_.cell(i, jl).value, ws_.cell(i, jh).value = _r(lo, 2), _r(hi, 2); k_ += 1
+    n8 = _note(8).replace("; uncertainty intervals of the multiple were not estimated for T2D and CKD", ", with multiples computed within each simulation")
+    _setnote(8, n8); print(f"Table 8: {k_} T2D and CKD rows given intervals of the multiple")
+# Table 20: scope of the expenditure analysis
+add_note(20, "Expenditure covers only the drug cost for time on treatment and the implementation cost of the dietary package, from a "
+             "public payer perspective, in 2024-25 US dollars, with unit costs held constant over 30 years. It excludes delivery, "
+             "monitoring, adverse events and downstream health-care costs and savings, so it is not a full cost-effectiveness analysis.",
+         at=" CKD, chronic kidney disease;")
+# Table 21: three panels, each with its own header
+ws21 = wb["Supplementary Table 21"]
+PA = (["Country", "ISO3", "GLP-1RA price", "Dietary policy cost over 30 years (US$ millions)"] + UI3("Deaths averted by dietary policy")
+      + ["Treatment coverage bought with the dietary policy cost (% of eligible adults)"] + UI3("Deaths averted by that treatment"))
+PB = (["Country", "ISO3", "GLP-1RA price", "Budget, treatment at 20% coverage (US$ millions)", "Dietary policy cost as share of the budget (%)"]
+      + UI3("Deaths averted, treatment only") + ["Treatment coverage with the remaining budget (% of eligible adults)"]
+      + UI3("Deaths averted, dietary policy plus treatment"))
+PC = ["Country", "ISO3", "GLP-1RA price"] + UI3("Deaths averted per dollar, dietary policy relative to treatment")
+full = [_row21(r) for r in bq.itertuples()]          # columns as in H21
+ix = {h: i for i, h in enumerate(H21)}
+def pick(row, cols): return [row[ix[c]] for c in cols]
+A_ = ["Country", "ISO3", "GLP-1RA price", "Dietary policy cost over 30 years (US$ millions)", "Deaths averted by dietary policy", "95% UI lower", "95% UI upper",
+      "A. Treatment coverage bought with the dietary policy cost (% of eligible adults)", "A. Deaths averted by that treatment"]
+rowsA = [row[:4] + row[4:7] + [row[7]] + row[8:11] for row in full]
+rowsB = [row[:3] + [row[11], row[12]] + row[13:16] + [row[16]] + row[17:20] for row in full]
+rowsC = [row[:3] + row[20:23] for row in full]
+leg21 = _note(21)
+for rng in list(ws21.merged_cells.ranges): ws21.unmerge_cells(str(rng))
+ws21.delete_rows(1, ws21.max_row)
+r0 = 1; ws21.cell(r0, 1, T21); _style(ws21.cell(r0, 1), STY["title"]); ws21.merge_cells(start_row=r0, start_column=1, end_row=r0, end_column=len(PB)); r0 += 1
+for lab, H, R_ in (("A. Treatment funded by the cost of the dietary package", PA, rowsA),
+                   ("B. Budget for treatment at 20% coverage, spent on treatment alone or on the dietary package first", PB, rowsB),
+                   ("C. Deaths averted per dollar spent, dietary policy relative to treatment at 20% coverage", PC, rowsC)):
+    ws21.cell(r0, 1, lab); _style(ws21.cell(r0, 1), STY["title"]); r0 += 1
+    for jj, h in enumerate(H, 1): ws21.cell(r0, jj, h); _style(ws21.cell(r0, jj), STY["head"])
+    ws21.row_dimensions[r0].height = 60; r0 += 1
+    for row in R_:
+        for jj, v in enumerate(row, 1): ws21.cell(r0, jj, v); _style(ws21.cell(r0, jj), STY["data"])
+        r0 += 1
+    r0 += 1
+leg21 = leg21.replace("A, the GLP-1RA coverage", "Panel A, the GLP-1RA coverage").replace(" B, the expenditure", " Panel B, the expenditure").replace(" C, deaths averted per dollar", " Panel C, deaths averted per dollar")
+ws21.cell(r0, 1, leg21); _style(ws21.cell(r0, 1), STY["note"]); ws21.merge_cells(start_row=r0, start_column=1, end_row=r0, end_column=len(PB))
+ws21.row_dimensions[r0].height = 150
+for jj, w in enumerate([22, 7, 14, 14, 13, 12, 12, 14, 13, 12, 12, 13, 12], 1): ws21.column_dimensions[ws21.cell(2, jj).column_letter].width = w
 
 os.makedirs(os.path.dirname(A.out) or ".", exist_ok=True)
 wb.save(A.out)

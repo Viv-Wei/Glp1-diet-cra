@@ -1,20 +1,20 @@
-iso3,brand_annual_usd,verified,source_note
-USA,16188,1,"Wegovy list $1349.02/28d, Novo Nordisk 2024-25"
-CHN,2400,1,"Wegovy self-pay about CNY 1400-1500/month at low-medium dose; earlier working figure CNY 15000-20000/year"
-IND,2340,1,"Wegovy India 2025 launch price; set in an earlier session"
-BRA,3600,0,"Wegovy Brazil about BRL 1600/month converted; pending ANVISA/CMED price check"
-NGA,2400,0,"Not officially launched; assumed from the regional imported Ozempic price; pending"
-CAN,4200,0,"Wegovy Canada about CAD 450-500/month converted; pending"
-TUR,2000,0,Turkey price pending (government reference-price system)
-ZAF,3200,0,"Wegovy South Africa 2025 launch; about ZAR 4500-5000/month converted; pending"
-EGY,1900,0,"Placeholder: Ozempic Egypt market price about EGP 7000-9000/month at official FX; pending EDA price; main scenario uses the generic price"
-BGD,2000,0,"Placeholder: no local launch price; assumed from the Indian branded price plus a neighbouring-country premium; main scenario uses the Indian generic export-price scenario"
-MEX,3600,0,"Placeholder: Wegovy Mexico out-of-pocket about MXN 5000-6000/month converted; pending COFEPRIS/market price"
-AUS,3350,1,"Checked 2026-08: AUD 400-460/month maintenance dose out-of-pocket (consistent across sources; minimum AUD 338); PBAC recommended PBS listing in 2026-01 (restricted to BMI>=35 + CVD), under price negotiation"
-NZL,5000,0,"Placeholder: based on the Australian out-of-pocket market; not Pharmac-funded; pending"
-ROU,3400,0,"Placeholder: based on low-price EU countries; pending the CaNaMed national price catalogue"
-BGR,3400,0,"Placeholder: based on low-price EU countries; pending the NCPR price register"
-ISR,4300,0,Placeholder (pending patent confirmation): pending the Ministry of Health price catalogue
-JPN,4400,1,"Checked 2026-08: out-of-pocket JPY 55000/month (2.4 mg); dual track: insured co-pay about JPY 13000/month (about $1050, narrow eligibility BMI>=27 + 2 complications) used in sensitivity"
-GBR,3800,1,"Checked 2026-08: private pay GBP 200-300/month maintenance dose; NHS TA875 narrow specialist coverage, prescription charge GBP 9.9"
-DEU,3600,1,"Checked 2026-08: EUR 276.83/month (2.4 mg, after the 2025-04 Novo price change); GKV does not reimburse the obesity indication"
+iso3,brand_annual_usd,verified,source_note,price_per_pen_lcu,currency,vat,price_type,pens_per_year,lcu_per_usd,fx_source,access_date,source_url
+AUS,3379,1,Pharmacy retail price (not listed on the PBS),369.99,AUD,Exempt,Pharmacy retail price,13,1.4236,"ECB reference rate, 26 October 2026",2026-10-27,https://www.chemistwarehouse.com.au/buy/143701/wegovy-2-4mg-dose-flextouch-pen-3ml-semaglutide
+BGD,2240,0,"Not launched; imputed as the price in India, the nearest launched market",,,,Imputed,13,,,2026-10-27,
+BGR,3264,1,National Council on Prices and Reimbursement register (maximum retail price),224.42,EUR,Included (20%),Official maximum retail price,13,0.8938,"ECB reference rate, 26 October 2026",2026-10-27,https://portal.ncpr.bg/registers/pages/register/list-medicament.xhtml
+BRA,4504,1,"Pharmacy retail price (single pen); regulated maximum consumer price (CMED PMC, ICMS 18%) BRL 2,532.31",1749.0,BRL,Included,Pharmacy retail price,13,5.0487,"ECB reference rate, 23 October 2026",2026-10-27,https://www.panvel.com/panvel/wegovy-semaglutida-24mg-3ml-com-4-agulhas/p-93222
+CAN,4448,1,"Median of three national pharmacy chains, cash price including dispensing fee (telephone survey, June 2026)",480.0,CAD,Not applicable,Pharmacy retail price,13,1.4028,"ECB reference rate, 26 October 2026",2026-10-27,https://teletest.ca/cost/drug/wegovy/
+CHN,2504,1,"Provincial procurement listing price, Qinghai and Shanghai (identical)",1284.36,CNY,Included,Official procurement price,13,6.6681,"ECB reference rate, 26 October 2026",2026-10-27,https://ybj.qinghai.gov.cn/20251225/28e617a2bc1c4642b18c8693eec672ac/c.html
+DEU,4026,1,Pharmacy retail price (Apothekenverkaufspreis) from 1 April 2026,276.83,EUR,Included,Official pharmacy retail price,13,0.8938,"ECB reference rate, 26 October 2026",2026-10-27,https://www.apotheke-adhoc.de/nachrichten/detail/markt/wegovy-erhaltungsdosis-wird-guenstiger/
+EGY,3575,1,Pharmacy retail price,13612.0,EGP,Exempt,Pharmacy retail price,13,49.5,"Approximate official rate, late October 2026 (to confirm with the Central Bank of Egypt)",2026-10-27,https://re3ayapharmacy.com/products/wegovy-2-4-mg-3-ml-1-pen-4-doses
+GBR,3470,1,Private online pharmacy price (MedExpress); NHS list price GBP 175.80 excluding VAT,199.99,GBP,Included,Pharmacy retail price,13,0.7492,"ECB reference rate, 26 October 2026",2026-10-27,https://support.medexpress.co.uk/en/articles/670517-how-much-does-wegovy-cost-and-what-are-my-options
+IND,2240,1,Novo Nordisk India price list effective 1 April 2026 (maximum retail price),16400.0,INR,Included,Manufacturer price list,13,95.1855,"ECB reference rate, 26 October 2026",2026-10-27,https://www.indianpharmapost.com/news/lite/novo-nordisk-india-sets-patient-centred-price-of-rs-202day-for-starting-dose-of-ozempic-and-wegovy-19502
+ISR,4516,1,Consumer list price at a health fund pharmacy (Leumit); halved for supplementary insurance members meeting medical criteria,1070.02,ILS,Included,Consumer list price,13,3.0799,"ECB reference rate, 26 October 2026",2026-10-27,https://www.leumit.co.il/medicinesearch/
+JPN,4541,1,"Self-pay clinic price, two clinics (identical); reimbursed price JPY 40,861",55000.0,JPY,Included,Clinic self-pay price,13,157.4455,"ECB reference rate, 26 October 2026",2026-10-27,https://mizuno-naishikyo.jp/column/495/
+MEX,7508,1,Pharmacy regular retail price,10751.0,MXN,Included,Pharmacy retail price,13,18.6156,"ECB reference rate, 26 October 2026",2026-10-27,https://wecarepharma.mx/products/wegovy-semaglutida-pluma-precargada-2-4-mgn-3-2-mg-4dosis
+NGA,3294,0,"Not launched; imputed as the mean price in Egypt and South Africa, the launched markets in Africa",,,,Imputed,13,,,2026-10-27,
+NZL,3471,1,Pharmacy non-subsidised retail price (not funded by Pharmac),469.99,NZD,Included,Pharmacy retail price,13,1.7604,"ECB reference rate, 26 October 2026",2026-10-27,https://www.bargainchemist.co.nz/products/wegovy-24-mg-flextouch-96mg3ml
+ROU,3628,1,National public catalogue of maximum medicine prices (CaNaMed),1333.98,RON,Included (11%),Official maximum retail price,13,4.7795,"ECB reference rate, 26 October 2026",2026-10-27,https://ms.ro/ro/minister/organizare/directia-politica-medicamentului-si-a-dispozitivelor-medicale/preturi-medicamente/catalogul-public-national-al-preturilor-maximale-ale-medicamentelor-de-uz-uman/
+TUR,4177,1,"Retail price from the national medicines price list (TITCK), via Ilac Rehberi",15990.0,TRY,Included (10%),Official price list,13,49.7628,"ECB reference rate, 26 October 2026",2026-10-27,https://www.ilacrehberi.com/ilac-fiyatlari/8699676951369/
+USA,4537,1,NovoCare Pharmacy self-pay price (one month defined as one box of 4 pens),349.0,USD,Not applicable,Manufacturer self-pay price,13,1.0,,2026-10-27,https://www.novocare.com/obesity/products/wegovy.html
+ZAF,3013,1,"Single exit price, Medicine Price Registry database of 1 October 2026 (excludes dispensing fee)",3853.52,ZAR,Included (15%),Official single exit price,13,16.6291,"ECB reference rate, 26 October 2026",2026-10-27,https://www.health.gov.za/nhi-pee/

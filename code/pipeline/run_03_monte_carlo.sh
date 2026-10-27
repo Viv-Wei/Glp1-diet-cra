@@ -16,4 +16,5 @@ t "3.7 convergence (first vs second 500 draws)"; python code/analysis/convergenc
 t "errors (lines): main $(wc -l < $MC_DIR/errors.log 2>/dev/null || echo 0), trajectories $(wc -l < data/results/v3/mc_traj/errors.log 2>/dev/null || echo 0), T2D/CKD $(wc -l < data/results/v3/mc_t2dckd/errors.log 2>/dev/null || echo 0), scenarios $(wc -l < data/results/v3/mc_scen/errors.log 2>/dev/null || echo 0)"
 t "3.8 expenditure and equal-budget comparison with uncertainty"; python code/analysis/expenditure_ui_v3.py > logs/s3_expenditure_ui.log 2>&1
 t "3.9 deaths averted by education group (300 draws)";  bash code/analysis/run_equity_mc.sh $J > logs/s3_equity_mc.log 2>&1
+t "3.10 Table 8 intervals and discounted expenditure"; python code/analysis/secondary_ui_v3.py > logs/s3_secondary_ui.log 2>&1
 t "stage 3 done"

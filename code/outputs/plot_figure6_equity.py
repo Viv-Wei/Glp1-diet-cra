@@ -52,8 +52,8 @@ GRP = {
 fig = plt.figure(figsize=(7.4, 5.3))
 axA = fig.add_axes([0.07, 0.22, 0.175, 0.71])
 axB = fig.add_axes([0.265, 0.22, 0.205, 0.71])
-axD = fig.add_axes([0.505, 0.22, 0.16, 0.71])        # panel c: cost threshold
-axC = fig.add_axes([0.75, 0.22, 0.19, 0.71])         # panel d: deaths averted by education group
+axC = fig.add_axes([0.53, 0.22, 0.19, 0.71])         # panel c: deaths averted by education group
+axD = fig.add_axes([0.815, 0.22, 0.16, 0.71])        # panel d: cost threshold, with its own country labels
 y = np.arange(len(ORDER))[::-1]
 Y = dict(zip(ORDER, y))
 
@@ -235,6 +235,9 @@ PRICES = [
 ]
 
 
+SHOW_UI = False
+
+
 def draw_slope(ax, d, scale, small=False, label=False):
 
     g = d.set_index(["Price scenario", "Education group"])[["diet", "diet_lo", "diet_hi", "glp1", "glp1_lo", "glp1_hi"]] * scale
@@ -243,10 +246,12 @@ def draw_slope(ax, d, scale, small=False, label=False):
         off_ = (k_ - 1) * (0.09 if not small else 0.12)                     # interval offsets by education group
         tv = [g.loc[(p, edu), "glp1"] for p, _ in PRICES]
         dv = g.loc[("Branded", edu), "diet"]
-        # 95% uncertainty intervals: treatment at each price, dietary policy (the same at every price) at the right
-        ax.vlines(X + off_, [g.loc[(p, edu), "glp1_lo"] for p, _ in PRICES], [g.loc[(p, edu), "glp1_hi"] for p, _ in PRICES],
+        # 95% uncertainty intervals: treatment at each price, dietary policy (the same at every price) at the right;
+        # not drawn (the intervals overlap too much to read); they are reported in Supplementary Table 18
+        if SHOW_UI and not small:
+          ax.vlines(X + off_, [g.loc[(p, edu), "glp1_lo"] for p, _ in PRICES], [g.loc[(p, edu), "glp1_hi"] for p, _ in PRICES],
                   color=col, lw=0.6 if small else 0.8, alpha=0.8, zorder=2)
-        ax.vlines(X[-1] + 0.25 + 0.1 * k_, g.loc[("Branded", edu), "diet_lo"], g.loc[("Branded", edu), "diet_hi"],
+          ax.vlines(X[-1] + 0.25 + 0.1 * k_, g.loc[("Branded", edu), "diet_lo"], g.loc[("Branded", edu), "diet_hi"],
                   color=col, lw=0.6 if small else 0.8, ls=(0, (2, 1)), alpha=0.8, zorder=2)
         ax.plot(
             X,
@@ -322,13 +327,14 @@ axD.axvspan(0.05, 1, color="#FBEFEC", zorder=0)
 axD.axvline(1, color="black", lw=0.6)
 axD.set_xscale("log"); axD.set_xlim(0.05, 60)
 axD.set_xticks([0.1, 1, 10]); axD.set_xticklabels(["0.1", "1", "10"])
-axD.set_ylim(axB.get_ylim()); axD.set_yticks(y); axD.set_yticklabels([])
+axD.set_ylim(axB.get_ylim()); axD.set_yticks(y); axD.set_yticklabels(ORDER, fontsize=6.2)
+for lab_ in axD.get_yticklabels(): lab_.set_color(GRP[lab_.get_text()])
 for sp in ("top", "right"): axD.spines[sp].set_visible(False)
-axD.set_xlabel("Cost threshold\n(log scale)")
-axD.text(1.15, len(ORDER) - 0.15, "Diet\ncheaper →", fontsize=5.8, color="grey", va="bottom")
+axD.set_xlabel("Deaths averted per dollar,\ndiet relative to\ntreatment (log scale)")
+axD.text(1.15, len(ORDER) - 0.15, "Diet averts\nmore →", fontsize=5.8, color="grey", va="bottom")
 axD.legend(handles=[Line2D([], [], marker="o", ls="", color="#00A087", ms=4, label="Generic US$140"),
                     Line2D([], [], marker="D", ls="", mfc="white", mec="#00A087", ms=3.5, label="Generic US$28")],
-           loc="upper center", bbox_to_anchor=(0.45, -0.13), ncol=1, fontsize=5.8, frameon=False, handletextpad=0.2)
+           loc="upper center", bbox_to_anchor=(0.45, -0.2), ncol=1, fontsize=5.8, frameon=False, handletextpad=0.2)
 draw_slope(axC, POOL, 1e-3, label=True)
 axC.set_ylabel("Deaths averted over 30 years, 19 countries combined (millions)")
 axC.set_xlabel("GLP-1RA price scenario")
@@ -340,8 +346,8 @@ gl = (
 )
 r_ = pd.to_numeric(MAPU["ratio_median"], errors="coerce")
 axC.text(
-    0.02,
-    0.985,
+    0.03,
+    0.72,
     f"Low education, diet-to-\ntreatment ratio at US$140\n{r_.min():.2f}–{r_.max():.2f} across\neducation–income links",
     transform=axC.transAxes,
     ha="left",
@@ -388,7 +394,7 @@ axC.legend(
     title_fontsize=5.6,
 )
 
-for ax, tag, dx in [(axA, "a", -0.36), (axB, "b", -0.08), (axD, "c", -0.12), (axC, "d", -0.36)]:
+for ax, tag, dx in [(axA, "a", -0.36), (axB, "b", -0.08), (axC, "c", -0.28), (axD, "d", -0.3)]:
     ax.text(dx, 1.03, tag, transform=ax.transAxes, fontsize=12, fontweight="bold")
 os.makedirs(os.path.dirname(R(a.out)) or ".", exist_ok=True)
 fig.savefig(R(a.out) + ".pdf")
