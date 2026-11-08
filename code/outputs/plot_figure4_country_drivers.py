@@ -20,12 +20,12 @@ p.add_argument(
 p.add_argument(
     "--t-prio",
     type=int,
-    default=12,
+    default=10,
     help="table with each factor's share of the country CVD benefit",
 )
 p.add_argument(
     "--prio-csv",
-    default="data/tables/table_single_factor_v3.csv",
+    default="data/tables/table_single_factor_mc.csv",
     help="dietary priorities from code/analysis/run_single_factor_v3.sh (used if present; otherwise --t-prio)",
 )
 p.add_argument("--programme", default="data/results/v3/decomp/main_check_programme.csv")

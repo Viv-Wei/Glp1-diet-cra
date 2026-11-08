@@ -353,6 +353,11 @@ d3 = pd.read_csv("data/results/v3/mc_scen/summary_scenarios_disc3.csv")
 sc = pd.concat(
     [sc, d3[d3.scenario == "main"].assign(scenario="discount_3pct")], ignore_index=True
 )
+for _c in ("xext", "crossover"):                                    # main row as in Supplementary Table 7
+    for _q in ("median", "lo", "hi"):
+        _src = CR[f"{_c}_{_q}_%"] / 100 if f"{_c}_{_q}_%" in CR else None
+        if _src is not None:
+            _m = sc.scenario == "main"; sc.loc[_m, f"{_c}_{_q}"] = sc.loc[_m, "iso3"].map(_src).values
 FM = {
     "cvd": "as for cardiovascular death",
     "same": "as for non-fatal events",
@@ -373,8 +378,16 @@ G = {
     "Effects after disease onset": {
         "post_A": "No effect on deaths after onset",
         "post_C": "Nor on fatal first events",
-        "diet_post_na": "Dietary sodium effect also on deaths after onset",
-        "diet_post_na_wg": "Dietary sodium and whole grain effects also on deaths after onset",
+        "diet_post_none": "No dietary effect on deaths after onset",
+        "diet_post_na_wg": "Whole grain effect also on deaths after onset",
+    },
+    "Projected trends": {
+        "trend_none": "Disease rates and BMI held at 2023 values",
+        "trend_no_cvd": "IHD and IS rates held at 2023 values",
+        "trend_cvd_mort": "IHD and IS trends on deaths after onset only",
+        "trend_no_oth": "Other-cause mortality held at 2023 values",
+        "trend_no_bmi": "BMI distribution held at 2023 values",
+        "trend_no_dm": "Diabetes incidence held at 2023 values",
     },
     "Dietary policy implementation": {
         "phase_12": "Phase-in over 12 years",
@@ -399,6 +412,7 @@ G = {
         "uniform": "Places allocated uniformly",
         "dynamic": "Every eligible adult with IHD or IS enrolled from year 2",
         "cap": "Absolute benefit in people with IHD or IS capped at US level",
+        "elig_rule_legacy": "Diabetes eligible only with BMI 27 or more",
     },
     "Trial effect estimates": {
         "primary_weak": "40% of the effect without CVD",
@@ -448,7 +462,7 @@ def scen_rows(df):
             share = ["Not estimable"] * 3
         cross = (
             ["Not estimated (20% coverage only)"] * 3
-            if r.scenario == "dynamic"
+            if r.scenario == "dynamic" or str(r.scenario).startswith(("sw_", "sec_", "single_"))
             else [cx(100 * r.xext_median), cx(100 * r.xext_lo), cx(100 * r.xext_hi)]
         )
         ratio = (                                                       # treatment benefit near or below zero
@@ -468,7 +482,7 @@ def scen_rows(df):
 
 
 t13 = style_table(13)
-s13 = sc[~sc.scenario.str.startswith("sw_")].copy()
+s13 = sc[~sc.scenario.str.startswith(("sw_", "sec_", "single_"))].copy()    # shown in their own tables
 miss = sorted(set(s13.scenario) - set(LBL))
 assert not miss, f"scenarios without a label: {miss}"
 x13 = pd.DataFrame(
@@ -489,7 +503,7 @@ NEW[13] = (
 LEGEND[13] = [
     (
         "Crossover coverage above 100% is the programme size needed relative to enrolling all eligible adults (lower bound).",
-        "Where treatment did not match dietary policy even with every eligible adult enrolled, crossover is reported as not reached.",
+        "Where treatment averted fewer deaths than dietary policy even with every eligible adult enrolled, crossover is reported as not reached.",
     )
 ]
 t14 = style_table(14)
@@ -565,10 +579,8 @@ c_ = c_[["Country", "ISO3"] + [c for c in c_.columns if c not in ("Country", "IS
 assert list(c_.columns) == list(t21.columns), (list(c_.columns), list(t21.columns))
 NEW[21] = order(c_.reset_index(drop=True))
 t22 = style_table(22)
-q_ = pd.read_csv(
-    "data/results/v3/sa_t2d_ckd/summary_sa_t2d_ckd.csv", dtype={"coverage": str}
-)
-q_ = q_[q_.coverage.isin(["0.20", "0.2", "afford"])].dropna(subset=["t2d_glp1"])
+q_ = pd.read_csv("data/results/v3/mc_scen/sec_t2d_ckd_mc.csv", dtype={"cov": str})     # 1000 simulations each
+q_ = q_[q_.iso3 == "GLB"]
 SL = {
     "main": "Main analysis",
     "t2d_bucur026": "GLP-1RA network meta-analysis estimate",
@@ -579,35 +591,23 @@ SL = {
     "sbp_dm0": "No blood pressure fall with diabetes",
     "sbp_none": "No blood pressure fall",
 }
-lab22 = t22.drop_duplicates("Analysis").set_index("Analysis")[
-    [t22.columns[1], t22.columns[2]]
-]
+lab22 = t22.drop_duplicates("Analysis").set_index("Analysis")[[t22.columns[1], t22.columns[2]]]
+ui_ = lambda m, l, h, k=1e3, d=0: (f"{m / k:,.{d}f} ({l / k:,.{d}f} to {h / k:,.{d}f})")
 rows = []
 for k, l in SL.items():
     for cov, cl in (("0.20", "20%"), ("afford", "Maximum affordable")):
-        r = q_[
-            (q_.scenario == k)
-            & (q_.coverage.isin([cov, "0.2"] if cov == "0.20" else [cov]))
-        ]
-        if not len(r):
+        gt = q_[(q_.scenario == "sec_" + k) & (q_["cov"] == cov) & (q_.outcome == "T2D")]
+        gc = q_[(q_.scenario == "sec_" + k) & (q_["cov"] == cov) & (q_.outcome == "CKD")]
+        if not len(gt) or not len(gc):
             continue
-        r = r.iloc[0]
+        a, b = gt.iloc[0], gc.iloc[0]
         rows.append(
             [
-                l,
-                lab22.loc[l].iloc[0],
-                lab22.loc[l].iloc[1],
-                cl,
-                round(r.t2d_glp1 / 1e3),
-                round(r.t2d_diet / 1e3),
-                r2(r.t2d_diet / r.t2d_glp1) if r.t2d_glp1 > 0 else "Not estimable",
-                r1(r.ckd_glp1 / 1e3),
-                r1(r.ckd_diet / 1e3),
-                (
-                    r2(r.ckd_diet / r.ckd_glp1)
-                    if r.ckd_glp1 > 0
-                    else "No treatment effect on CKD"
-                ),
+                l, lab22.loc[l].iloc[0], lab22.loc[l].iloc[1], cl,
+                ui_(a.trt_median, a.trt_lo, a.trt_hi), ui_(a.diet_median, a.diet_lo, a.diet_hi),
+                ui_(a.ratio_median, a.ratio_lo, a.ratio_hi, 1, 2) if a.trt_median > 0 else "Not estimable",
+                ui_(b.trt_median, b.trt_lo, b.trt_hi, 1e3, 1), ui_(b.diet_median, b.diet_lo, b.diet_hi, 1e3, 1),
+                ui_(b.ratio_median, b.ratio_lo, b.ratio_hi, 1, 2) if b.trt_median > 0 else "No treatment effect on CKD",
             ]
         )
 NEW[22] = pd.DataFrame(rows, columns=t22.columns)
@@ -680,7 +680,7 @@ def like_template(n, df):
 
 
 for n in list(NEW):
-    if n not in (3, 4, 20, 22):
+    if n not in (3, 4, 13, 20, 22):                                 # 13: ordered by scenario group
         NEW[n] = like_template(n, NEW[n])
 
 wb = load_workbook(A.style)
@@ -800,7 +800,7 @@ def relabel(n, col, old, new):
 DRAWS300 = ("The main-analysis estimates in this table are based on the first 300 of the 1000 main-analysis simulations, "
             "so that every scenario is compared with the same simulations. The primary estimates, based on all 1000 "
             "simulations, are reported in Supplementary Table 7 and differ slightly.")
-relabel(12, 2, "Main analysis", "Main analysis (first 300 simulations)")
+# main-analysis label unchanged: all analyses use the same 1000 simulations
 add_note(12, DRAWS300, at=" UI, uncertainty interval.")
 add_note(13, "The combination of 100% dietary policy effect, stopping probability multiplier 1 and an 8-year phase-in "
              "corresponds to the main analysis in these 300 simulations. " + DRAWS300.split(". ", 1)[1],
@@ -810,7 +810,7 @@ for n in (10, 11):
     add_note(n, DET, at="start")
 add_note(18, "Totals across the 19 countries exclude the rest of the world, so they are not comparable with the global "
              "estimates in Supplementary Table 6.", at=" GLP-1RA, glucagon-like")
-relabel(21, 1, "Main analysis", "Main analysis (deterministic)")   # becomes Table 22
+# main-analysis label unchanged (1000 simulations, as every row)
 add_note(21, replace=("Deterministic analyses, global totals over 30 years.",
                     "Deterministic analyses with central parameter values, global totals over 30 years. The main-analysis "
                     "rows therefore differ slightly from the Monte Carlo medians in Supplementary Table 6."))
@@ -915,9 +915,8 @@ def write_table(ws, title, header, rows, note, widths=None, head_h=75):
     ws.row_dimensions[lr].height = max(60, 15 * (len(note) // (14 * len(header)) + 2))
     for jj, w in enumerate(widths or [], 1): ws.column_dimensions[ws.cell(2, jj).column_letter].width = w
 T21 = "Supplementary Table 21. Equal-budget comparison of dietary policy and GLP-1RA treatment, by country and GLP-1RA price"
-UINOTE = ("Medians and 95% uncertainty intervals from 1000 simulations. Expenditure is at central parameter values and deaths "
-          "averted come from each simulation, so the intervals reflect uncertainty in the health effects, and ratios are "
-          "computed within each simulation.")
+UINOTE = ("Medians and 95% uncertainty intervals from 1000 simulations. Deaths averted and person-years on treatment both come "
+          "from each simulation, with prices fixed, and ratios are computed within each simulation.")
 leg = (UINOTE + " Expenditure was calculated as in Supplementary Table 20, treatment paying only for time on drug and dietary "
        "policy costing US$0.55 per adult per year, over 30 years without discounting. Deaths are deaths from IHD and ischaemic "
        "stroke averted over 30 years. A, the GLP-1RA coverage of eligible adults whose 30-year expenditure equals the cost of "
@@ -977,7 +976,7 @@ def _row18(r):
 n18 = _note(18)
 assert "Treatment at 20% coverage of eligible adults." in n18
 n18 = n18.replace("Treatment at 20% coverage of eligible adults.",
-                  "Treatment at 20% coverage of eligible adults. Medians and 95% uncertainty intervals from the first 300 simulations of "
+                  "Treatment at 20% coverage of eligible adults. Medians and 95% uncertainty intervals from 1000 simulations of "
                   "the main analysis, with education-specific PAFs, population shares, affordability and the education-income link at "
                   "central values, and ratios computed within each simulation.")
 write_table(wb["Supplementary Table 18"], str(wb["Supplementary Table 18"].cell(1, 1).value), H18,
@@ -989,7 +988,7 @@ H19 = (["Education-income link"] + UI3("Dietary policy, low education (thousands
 rows19 = [[r["Education-income link"], _r(r.diet_median, 0), _r(r.diet_lo, 0), _r(r.diet_hi, 0), _r(r.glp1_median, 0), _r(r.glp1_lo, 0),
            _r(r.glp1_hi, 0), _r(r.ratio_median, 2), _r(r.ratio_lo, 2), _r(r.ratio_hi, 2), r["Countries with no treatment benefit"]] for _, r in mp.iterrows()]
 write_table(wb["Supplementary Table 19"], str(wb["Supplementary Table 19"].cell(1, 1).value), H19, rows19,
-            "Medians and 95% uncertainty intervals from the first 300 simulations of the main analysis, with ratios computed within "
+            "Medians and 95% uncertainty intervals from 1000 simulations of the main analysis, with ratios computed within "
             "each simulation. " + _note(19), widths=[34] + [12] * 9 + [20])
 # Table 20: expenditure per death averted
 cu = pd.read_csv("data/results/v3/expenditure_ui/cost_ui.csv")
@@ -1198,6 +1197,99 @@ ws21.row_dimensions[r0].height = 150
 for jj, w in enumerate([22, 7, 14, 14, 13, 12, 12, 14, 13, 12, 12, 13, 12], 1): ws21.column_dimensions[ws21.cell(2, jj).column_letter].width = w
 
 os.makedirs(os.path.dirname(A.out) or ".", exist_ok=True)
+# ==== final restructuring (plan A): single-factor table from the scenario Monte Carlo, Table 11 removed, joint-variation
+# table without crossover columns, notes for 1000 simulations throughout
+from copy import copy as _cp
+def _style(c): return dict(font=_cp(c.font), fill=_cp(c.fill), border=_cp(c.border), alignment=_cp(c.alignment), number_format=c.number_format)
+def _apply(c, st):
+    for k, v in st.items(): setattr(c, k, v)
+def _rewrite(ws, header, rows, note):
+    hs, ds, ns = _style(ws.cell(2, 1)), _style(ws.cell(3, 4)), _style(ws.cell(ws.max_row, 1))
+    ts = _style(ws.cell(1, 1)); title = ws.cell(1, 1).value; nh = ws.row_dimensions[ws.max_row].height
+    for m in list(ws.merged_cells.ranges): ws.unmerge_cells(str(m))
+    ws.delete_rows(2, ws.max_row)
+    for j, h in enumerate(header, 1): c = ws.cell(2, j, h); _apply(c, hs)
+    for i, r in enumerate(rows, 3):
+        for j, v in enumerate(r, 1): c = ws.cell(i, j, v); _apply(c, ds)
+    lr = len(rows) + 3; c = ws.cell(lr, 1, note); _apply(c, ns); ws.merge_cells(start_row=lr, start_column=1, end_row=lr, end_column=len(header))
+    ws.row_dimensions[lr].height = nh; ws.cell(1, 1).value = title; _apply(ws.cell(1, 1), ts)
+    for j in range(len(header) + 1, ws.max_column + 1): ws.column_dimensions[ws.cell(2, j).column_letter].width = 2
+
+# 1. Table 10: single dietary factors, 1000 simulations
+_sf = pd.read_csv("data/results/v3/mc_scen/single_factor_mc.csv"); _fo = {v: i for i, v in enumerate(pd.unique(t11["Dietary factor"]))}
+_sf["Dietary factor"] = _sf.factor.map(code2name); _sf = _sf.dropna(subset=["Dietary factor"])
+_sf["_c"] = _sf.iso3.map({k: i for i, k in enumerate(ORDER)}); _sf["_f"] = _sf["Dietary factor"].map(_fo)
+_sf = _sf.sort_values(["_c", "_f"])
+_rows = [[NAME.get(r.iso3, r.iso3), r.iso3, r["Dietary factor"], round(r.deaths_median), round(r.deaths_lo), round(r.deaths_hi),
+          round(r.share_median, 1), round(r.share_lo, 1), round(r.share_hi, 1)] for _, r in _sf.iterrows()]
+_rewrite(wb["Supplementary Table 10"],
+         ["Country", "ISO3", "Dietary factor", "IHD and ischaemic stroke deaths averted over 30 years, median", "95% UI lower", "95% UI upper",
+          "Share of the country benefit, median (%)", "95% UI lower", "95% UI upper"], _rows,
+         "Medians and 95% uncertainty intervals from 1000 simulations. Each factor was shifted 20% toward its TMREL alone in the dietary "
+         "policy arm, with the other factors held at observed intake. The share of the country benefit is each factor's share of the summed "
+         "single-factor benefit, computed within each simulation. Single-factor results are not additive. Sodium-related risk is counted only "
+         "above 3.0 g a day (the midpoint of the GBD 2023 TMREL interval); modelled sodium intake in Nigeria is below this level, so sodium "
+         "reduction has no modelled benefit there. IHD, ischaemic heart disease; TMREL, theoretical minimum risk exposure level; UI, uncertainty interval.")
+wb["Supplementary Table 10"].cell(1, 1).value = ("Supplementary Table 10. Deaths from IHD and ischaemic stroke averted over 30 years by shifting each "
+                                                 "dietary factor 20% toward its TMREL, and the factor's share of the country benefit")
+
+# 2. joint variation (Table 13 before renumbering): ratio at 20% only, crossover columns removed
+_ws = wb["Supplementary Table 13"]; _cols = [j for j in range(1, _ws.max_column + 1)
+                                            if str(_ws.cell(2, j).value or "").startswith(("Crossover", "Treatment as %", "Share,"))]
+for m in list(_ws.merged_cells.ranges): _ws.unmerge_cells(str(m))
+for j in sorted(_cols, reverse=True): _ws.delete_cols(j)
+_nc = len([1 for j in range(1, _ws.max_column + 1) if _ws.cell(2, j).value is not None]); _lr = _ws.max_row
+_ws.cell(_lr, 1).value = ("Stopping probabilities were multiplied by 0 (nobody stops), 0.5, 1 or 1.5, combined with dietary policy effects held at "
+                          "100%, 80%, 60% or 40% of their full size throughout follow-up and with phase-in over 8, 12 or 16 years. Medians and 95% "
+                          "uncertainty intervals from 1000 simulations per scenario, at 20% treatment coverage. The combination of 100% dietary policy "
+                          "effect, stopping probability multiplier 1 and an 8-year phase-in is the main analysis. UI, uncertainty interval.")
+_ws.merge_cells(start_row=_lr, start_column=1, end_row=_lr, end_column=_nc)
+
+# 3. notes
+def _note(n, old, new):
+    ws = wb[f"Supplementary Table {n}"]; c = ws.cell(ws.max_row, 1); v = str(c.value)
+    assert old in v, (n, old[:60]); c.value = v.replace(old, new)
+_note(3, "The same draws were used in every scenario analysis (300 draws, common random numbers)", "The same 1000 draws were used in every analysis (common random numbers)")
+_note(12, "Medians and 95% uncertainty intervals from 300 simulations per scenario, using the same draws as the main analysis.",
+      "Medians and 95% uncertainty intervals from 1000 simulations per scenario, using the same draws as the main analysis. Crossover "
+      "coverage in the scenarios is interpolated between 11 coverage levels, and in the main analysis between 27.")
+_note(12, " The main-analysis estimates in this table are based on the first 300 of the 1000 main-analysis simulations, so that every scenario is "
+          "compared with the same simulations. The primary estimates, based on all 1000 simulations, are reported in Supplementary Table 7 and differ slightly.", "")
+_note(20, "Rows without discounting are medians and 95% uncertainty intervals from 1000 simulations, and rows with costs and deaths discounted at "
+          "3% a year (mid-year) from the first 300, as in the discounting scenario.",
+      "Medians and 95% uncertainty intervals from 1000 simulations, with costs and deaths undiscounted or discounted at 3% a year (mid-year).")
+_note(22, "Deterministic analyses with central parameter values, global totals over 30 years. The main-analysis rows therefore differ slightly from "
+          "the Monte Carlo medians in Supplementary Table 6.",
+      "Medians and 95% uncertainty intervals from 1000 simulations, global totals over 30 years, in thousands; ratios are computed within each simulation.")
+
+# 4. Table 11 removed, later tables renumbered, Contents rebuilt
+cs = wb["Contents"]; _t = {}
+for r in range(2, cs.max_row + 1):
+    v = cs.cell(r, 1).value; m_ = re.match(r"Supplementary Table (\d+)$", str(v)) if v else None
+    if m_: _t[int(m_.group(1))] = cs.cell(r, 2).value
+_t[10] = "Deaths from IHD and ischaemic stroke averted over 30 years by shifting each dietary factor 20% toward its TMREL"
+wb.remove(wb["Supplementary Table 11"])
+for o in range(12, 23):
+    ws = wb[f"Supplementary Table {o}"]; ws.title = f"Supplementary Table {o - 1}"
+    ws.cell(1, 1).value = re.sub(r"^Supplementary Table \d+", f"Supplementary Table {o - 1}", str(ws.cell(1, 1).value))
+_new = {k if k < 11 else k - 1: v for k, v in _t.items() if k != 11}
+_note_row = next(r for r in range(cs.max_row, 1, -1) if cs.cell(r, 1).value)
+_cn_style = _style(cs.cell(_note_row, 1))
+for m in list(cs.merged_cells.ranges):
+    if m.min_row > 1: cs.unmerge_cells(str(m))
+for r in range(2, cs.max_row + 1):
+    for c in range(1, cs.max_column + 1): cs.cell(r, c).value = None
+for i, n in enumerate(sorted(_new), 2): cs.cell(i, 1).value, cs.cell(i, 2).value = f"Supplementary Table {n}", _new[n]
+_nr = len(_new) + 3
+cs.cell(_nr, 1).value = ("Model results (Supplementary Tables 6 to 12 and 17 to 21) are medians and 95% uncertainty intervals from the same 1000 "
+                         "Monte Carlo simulations, with common random numbers across all analyses. Supplementary Tables 1 to 5 and 13 to 16 "
+                         "describe model inputs, parameters and calibration.")
+_apply(cs.cell(_nr, 1), _cn_style); cs.merge_cells(start_row=_nr, start_column=1, end_row=_nr, end_column=2)
+for ws in wb.worksheets:                                            # no note may mention 300 simulations or deterministic runs
+    v = str(ws.cell(ws.max_row, 1).value or "")
+    assert "300" not in v.replace("1300", "") and "Deterministic" not in v, (ws.title, v[:120])
+print("final restructuring: Table 10 from 1000 simulations, Table 11 removed, Tables 12-22 renumbered 11-21")
+
 wb.save(A.out)
 print(
     "renumbered (old -> new):",

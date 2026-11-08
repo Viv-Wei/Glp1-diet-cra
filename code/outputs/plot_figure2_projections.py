@@ -167,8 +167,11 @@ LINES = [
 ]
 
 
+LAST_YEAR = 27 if a.outcome == "T2D" else 30      # T2D shown to 2050, the end of the GBD diabetes forecasts
+
+
 def draw_annual(ax, iso, scale, small=False):
-    g = yr[yr.iso3 == iso]
+    g = yr[(yr.iso3 == iso) & (yr.year <= LAST_YEAR)]
     for cov, arm, col, ls, lw, lab in LINES:
         s = g[(g.coverage == cov) & (g.arm == arm)].sort_values("year")
         ax.fill_between(s.year, s.lo * scale, s.hi * scale, color=col, alpha=0.12, lw=0)
@@ -197,7 +200,7 @@ def draw_annual(ax, iso, scale, small=False):
             ha="right" if late else "left",
             va="top",
         )
-    ax.set_xlim(1, 30)
+    ax.set_xlim(1, LAST_YEAR)
     ax.set_ylim(0, None)
     ax.spines[["top", "right"]].set_visible(False)
     return cross, d, t
@@ -363,8 +366,8 @@ os.makedirs(os.path.dirname(R(a.out)) or ".", exist_ok=True)
 cross = None
 if a.outcome == "IHD+IS":
     fig = plt.figure(figsize=(7.4, 3.9))
-    axA = fig.add_axes([0.075, 0.14, 0.40, 0.78])
-    axB = fig.add_axes([0.58, 0.14, 0.40, 0.78])
+    axA = fig.add_axes([0.58, 0.14, 0.40, 0.78])   # annual deaths averted, panel b
+    axB = fig.add_axes([0.075, 0.14, 0.40, 0.78])  # 30-year totals and the combination, panel a (cited first)
     cross, d, t = draw_annual(axA, "GLB", 1e-3)
     axA.annotate(
         f"Feasible package overtakes\n20% coverage in year {cross}",
@@ -395,7 +398,7 @@ if a.outcome == "IHD+IS":
         borderaxespad=0.2,
         handlelength=1.8,
     )
-    for ax, tag in [(axA, "a"), (axB, "b")]:
+    for ax, tag in [(axB, "a"), (axA, "b")]:
         ax.text(
             -0.15, 1.03, tag, transform=ax.transAxes, fontsize=12, fontweight="bold"
         )

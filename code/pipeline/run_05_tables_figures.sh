@@ -9,6 +9,7 @@ run "Figure 2, Supplementary Figures 2 and 3" python $C/plot_figure2_projections
 run "Supplementary Figures 5 and 6 (T2D)"     python $C/plot_figure2_projections.py --outcome T2D
 run "Supplementary Figures 7 and 8 (CKD)"     python $C/plot_figure2_projections.py --outcome CKD
 run "Figure 3"                                python $C/plot_figure3_threshold.py
+run "Single-factor table for Figure 4e"     python $C/make_single_factor_table.py
 run "Figure 4"                                python $C/plot_figure4_country_drivers.py
 run "Figure 5"                                python $C/plot_figure5_robustness.py
 run "Figure 6, Supplementary Figure 9"        python $C/plot_figure6_equity.py

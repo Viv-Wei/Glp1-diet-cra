@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Deaths averted by education group with 95% uncertainty intervals (Supplementary Tables 18 and 19, Figure 6d and
-Supplementary Figure 9): summarises equity_v3.py applied to each of the first 300 Monte Carlo draws at 20% coverage
+Supplementary Figure 9): summarises equity_v3.py applied to each of the 1000 Monte Carlo draws at 20% coverage
 (data/results/v3/equity_mc/alloc/d<draw>/). Education-specific PAFs, affordability and the education-income link are at
 central values, so the intervals reflect uncertainty in the deaths averted by each intervention. Medians and 2.5th and
 97.5th percentiles; ratios and percentages are computed within each draw.
 Outputs: data/results/v3/equity_mc/equity_ui.csv, pooled_ui.csv, mapping_ui.csv
-Usage (repository root): python code/analysis/equity_mc_aggregate.py"""
+Usage (project root): python code/analysis/equity_mc_aggregate.py"""
 import glob, os
 import numpy as np, pandas as pd
 B = "data/results/v3/equity_mc"

@@ -53,8 +53,11 @@ plt.rcParams.update(
 )
 
 
+LAST = {"T2D": 27}                       # T2D shown to 2050 (year 27), the end of the GBD diabetes forecasts
+
+
 def traj(ax, outcome, ylab):
-    g = tr[(tr.outcome == outcome) & (tr.iso3 == "GLB")]
+    g = tr[(tr.outcome == outcome) & (tr.iso3 == "GLB") & (tr.year <= LAST.get(outcome, 30))]
 
     def series(run, arm):
         s = g[(g.run == run) & (g.arm == arm)].sort_values("year")
@@ -101,8 +104,8 @@ def traj(ax, outcome, ylab):
             fontsize=6.6,
             color="#444444",
         )
-    ax.set_xlim(1, 30)
-    ax.set_xticks([1, 5, 10, 15, 20, 25, 30])
+    ax.set_xlim(1, LAST.get(outcome, 30))
+    ax.set_xticks([1, 5, 10, 15, 20, 25] + [LAST.get(outcome, 30)])
     ax.set_ylim(0, None)
     ax.set_xlabel("Year of projection")
     ax.set_ylabel(ylab)

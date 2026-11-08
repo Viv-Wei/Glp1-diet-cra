@@ -1,6 +1,9 @@
+#!/usr/bin/env bash
+# Scenario Monte Carlo (project root). Usage: bash code/analysis/mc_scen_v3.sh [draws, default 300] [parallel jobs, default 120]
+# Needs the main Monte Carlo draws (data/results/v3/mc/draws.csv). Resumable: finished jobs are skipped when rerun.
 set -e
 source code/pipeline/env_main.sh
-export MC_DIR=data/results/v3/mc MC_SCEN_DIR=${MC_SCEN_DIR:-data/results/v3/mc_scen}
+export MC_DIR=data/results/v3/mc MC_SCEN_DIR=${MC_SCEN_DIR:-results/v3/mc_scen}
 N=${1:-300}; J=${2:-120}
 [ -f $MC_DIR/draws.csv ] || { echo "main Monte Carlo draws not found"; exit 1; }
 mkdir -p $MC_SCEN_DIR

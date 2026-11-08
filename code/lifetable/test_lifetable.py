@@ -3,7 +3,8 @@ import numpy as np
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from lifetable.settings import AGES, SEXES, ST, KS
+from lifetable.settings import AGES, SEXES, ST
+KS = ["T", "E", "O"]   # original compartments; the BMI structure of the main analysis is tested in test_bmi.py
 from lifetable.transitions import hazards, step, step_vec, age_one_year, ramp
 from lifetable.calibration import or_joint, calibrate, ckd_calibrate, ckd_events
 from lifetable import persistence as ps

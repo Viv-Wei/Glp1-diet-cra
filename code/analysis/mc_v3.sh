@@ -1,7 +1,10 @@
+#!/usr/bin/env bash
+# Monte Carlo for lifetable_v3 (project root). Usage: bash code/analysis/mc_v3.sh [draws, default 500] [parallel jobs, default 120]
+# Resumable: finished jobs are skipped when rerun.
 set -e
 source code/pipeline/env_main.sh
 export LT_DP_OVERRIDE=data/results/v3/diet_policy_arm_v2_tailored.csv
-export MC_DIR=${MC_DIR:-data/results/v3/mc}
+export MC_DIR=${MC_DIR:-results/v3/mc}
 N=${1:-500}; J=${2:-120}
 mkdir -p $MC_DIR
 [ -f $MC_DIR/draws.csv ] || python code/analysis/mc_v3.py prepare --draws $N

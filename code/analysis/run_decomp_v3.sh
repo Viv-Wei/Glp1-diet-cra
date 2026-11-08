@@ -5,7 +5,7 @@ O=data/results/v3/decomp
 [ -d $O ] && [ ! -d data/results/v3_before_dietunc/decomp ] && mkdir -p data/results/v3_before_dietunc && mv $O data/results/v3_before_dietunc/decomp
 mkdir -p $O
 for v in "main:X=1" "postA:SENS_POST_NONE=1" "postC:SENS_POST_NONE=1 SENS_FATAL_MODE=none"; do
-  t=${v%%:*}; e=${v
+  t=${v%%:*}; e=${v#*:}
   env $e SENS_TREAT=maintain SENS_ALLOC=risk SENS_T2D=0 SENS_CKD=0 python code/lifetable_v3.py --years 30 --coverage 0.2 \
       --diet-scenario feasible --out $O/$t.csv > $O/$t.log 2>&1 &
 done; wait

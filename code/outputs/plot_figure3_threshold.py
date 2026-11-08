@@ -457,7 +457,7 @@ if SHOW_H:
     axB.tick_params(axis="y", length=0)
     axB.axhline(len(order) - 1.5, color="#cccccc", lw=0.6)
 axB.set_xticks([0, 20, 40, 60, 80, 100])
-axB.set_xlabel("Coverage needed to match dietary policy\n(% of eligible adults)")
+axB.set_xlabel("Coverage at which treatment averts\nas many deaths as dietary policy\n(% of eligible adults)")
 axB.spines[["top", "right"]].set_visible(False)
 axB.text(
     -0.05 if SHOW_H else -0.2,

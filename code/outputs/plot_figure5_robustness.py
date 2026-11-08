@@ -54,8 +54,20 @@ SECTIONS = [
                 [
                     ("post_A", "No treatment effect on deaths after onset"),
                     ("post_C", "Nor on fatal first events"),
-                    ("diet_post_na", "Dietary sodium effect also after onset"),
-                    ("diet_post_na_wg", "Sodium and whole grain effects also after onset"),
+                    ("diet_post_none", "No dietary effect on deaths after onset"),
+                    ("diet_post_na_wg", "Whole grain effect also after onset"),
+                ],
+            ),
+            (
+                "Projected trends",
+                "#4B6F9E",
+                [
+                    ("trend_none", "Disease rates and BMI held at 2023 values"),
+                    ("trend_no_cvd", "IHD and IS rates held at 2023 values"),
+                    ("trend_cvd_mort", "IHD and IS trends on deaths after onset only"),
+                    ("trend_no_oth", "Other-cause mortality held at 2023 values"),
+                    ("trend_no_bmi", "BMI distribution held at 2023 values"),
+                    ("trend_no_dm", "Diabetes incidence held at 2023 values"),
                 ],
             ),
             (
@@ -91,6 +103,7 @@ SECTIONS = [
                     ("bmi25", "Eligibility extended to BMI ≥25"),
                     ("uniform", "Places allocated uniformly"),
                     ("no_dm_tier", "No priority for diabetes"),
+                    ("elig_rule_legacy", "Diabetes eligible only with BMI ≥27"),
                 ],
             ),
         ],
@@ -165,7 +178,7 @@ plt.rcParams.update(
 fig = plt.figure(figsize=(7.4, 8.4))
 ax = fig.add_axes([0.265, 0.085, 0.195, 0.855])
 hx = fig.add_axes([0.588, 0.085, 0.408, 0.855])
-XL = (0.2, 60)
+XL = (0.05, 60)
 ax.set_xscale("log")
 ax.set_xlim(*XL)
 ax.set_ylim(H - 0.4, -0.7)
@@ -254,7 +267,7 @@ ax.text(
     color="#00795f",
     style="italic",
 )
-ticks = [0.3, 1, 3, 10, 30]
+ticks = [0.1, 0.3, 1, 3, 10, 30]
 ax.set_xticks(ticks)
 ax.set_xticklabels([f"{t:g}" for t in ticks])
 ax.xaxis.set_minor_formatter(plt.NullFormatter())

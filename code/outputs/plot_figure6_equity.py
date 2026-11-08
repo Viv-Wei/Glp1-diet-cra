@@ -12,8 +12,8 @@ from matplotlib.patches import Patch
 p = argparse.ArgumentParser()
 p.add_argument("--root", default=".")
 p.add_argument("--xlsx", default="data/tables/Supplementary_Tables_v5.xlsx")
-p.add_argument("--t-paf", type=int, default=14)
-p.add_argument("--t-cost", type=int, default=17)
+p.add_argument("--t-paf", type=int, default=13)
+p.add_argument("--t-cost", type=int, default=16)
 p.add_argument("--equity", default="data/results/v3/equity_cost_final/cov0.20")
 p.add_argument("--mc", default="data/results/v3/mc")
 p.add_argument("--budget", default="data/results/v3/expenditure_ui/budget_ui.csv")
@@ -25,7 +25,7 @@ tab = lambda n: pd.read_excel(R(a.xlsx), f"Supplementary Table {n}", header=1).i
 
 t13, t18 = tab(a.t_paf), tab(a.t_cost)
 t16 = pd.read_csv(R(f"{a.equity}/tableS_equity_v3.csv"))
-# Monte Carlo medians and 95% UIs (first 300 simulations): pooled over the 19 countries, and by country
+# Monte Carlo medians and 95% UIs (1000 simulations): pooled over the 19 countries, and by country
 _ren = {"diet_median": "diet", "glp1_median": "glp1"}
 POOL = pd.read_csv(R(f"{a.equity_mc}/pooled_ui.csv")).rename(columns=_ren)
 EQUI = pd.read_csv(R(f"{a.equity_mc}/equity_ui.csv")).rename(columns=_ren)
@@ -247,7 +247,7 @@ def draw_slope(ax, d, scale, small=False, label=False):
         tv = [g.loc[(p, edu), "glp1"] for p, _ in PRICES]
         dv = g.loc[("Branded", edu), "diet"]
         # 95% uncertainty intervals: treatment at each price, dietary policy (the same at every price) at the right;
-        # not drawn (the intervals overlap too much to read); they are reported in Supplementary Table 18
+        # not drawn (the intervals overlap too much to read); they are reported in Supplementary Table 17
         if SHOW_UI and not small:
           ax.vlines(X + off_, [g.loc[(p, edu), "glp1_lo"] for p, _ in PRICES], [g.loc[(p, edu), "glp1_hi"] for p, _ in PRICES],
                   color=col, lw=0.6 if small else 0.8, alpha=0.8, zorder=2)
