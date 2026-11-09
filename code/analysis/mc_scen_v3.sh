@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 source code/pipeline/env_main.sh
-export MC_DIR=data/results/v3/mc MC_SCEN_DIR=${MC_SCEN_DIR:-results/v3/mc_scen}
+export MC_DIR=data/results/v3/mc MC_SCEN_DIR=${MC_SCEN_DIR:-data/results/v3/mc_scen}
 N=${1:-300}; J=${2:-120}
 [ -f $MC_DIR/draws.csv ] || { echo "main Monte Carlo draws not found"; exit 1; }
 mkdir -p $MC_SCEN_DIR
