@@ -7,6 +7,7 @@ dpa = SourceFileLoader("dpa", "code/preprocessing/diet_policy_arm.py").load_modu
 CURVES = "data/params/dose_response_conv_fixed.csv"
 G = None
 
+
 def setup():
     global G
     g = pd.read_csv("data/exposure_19country.csv", low_memory=False)
