@@ -1,6 +1,5 @@
 import sys, numpy as np, pandas as pd
 
-
 def csv_same(a, b):
     x, y = pd.read_csv(a, low_memory=False), pd.read_csv(b, low_memory=False)
     ok, msg = _csv_same(x, y)
