@@ -1,23 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Deaths averted by education group and drug price with lifetable v3 (replaces build_equity_twoarm.py).
-
-Changes from the previous version
-  - national deaths averted from lifetable v3 (primary comparison, IHD + ischaemic stroke), by five-year age group
-  - education-specific PAFs recomputed with the corrected v2 dose-response curves (data/results/v3/equity_paf_by_edu_v2.csv)
-  - allocation by age: deaths averted in age group a are split across education groups using the education structure of
-    that age group (Wittgenstein Centre), so that the older, less educated age profile of people with cardiovascular
-    disease, who are treated first, is carried into the education split of treatment benefit
-Method
-  dietary policy  D_diet(a) x s_e(a) R_e / sum_e s_e(a) R_e, R_e = education-specific PAF (IHD and ischaemic stroke,
-                  weighted by diet-attributable deaths, GBD 2023 joint estimates)
-  treatment       D_trt(a) x s_e(a) x affordable fraction_e (rank-based education-income link, quintile affordable if
-                  annual cost <= 10% of per-capita income), as in the previous version
-  sensitivity     affordable fraction = lambda x rank-based + (1 - lambda) x country average, lambda = 1, 0.5, 0
-Inputs   <run>_byage.csv (lifetable_v3), data/results/v3/equity_paf_by_edu_v2.csv, data/results/supp_table2_joint.csv,
-         data/results/affordability_matrix.csv, data/input/wcde_clean.csv
-Outputs  <outdir>/tableS_equity_v3.csv, <outdir>/tableS_equity_mapping_sensitivity_v3.csv
-Usage    python code/analysis/equity_v3.py --run data/results/v3/equity_cost/main_0.20 --outdir data/results/v3/equity_cost
-"""
 import argparse, os
 import numpy as np, pandas as pd
 
