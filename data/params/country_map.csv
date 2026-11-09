@@ -1,0 +1,21 @@
+iso3,gbd_location_name,tier,tier_label,patent_note
+CHN,China,1,expiry_by_2027,CN200680006674 Expired 2026-03-20 - MedsPaL confirmed
+IND,India,1,expiry_by_2027,IN5107/DELNP/2007 Expired 2026-03-20 - MedsPaL confirmed
+BRA,Brazil,1,expiry_by_2027,"BRPI0607762 Granted(opposed), expiry 2026-03-20 passed - MedsPaL"
+CAN,Canada,1,expiry_by_2027,CA2601784C lapsed (fee non-payment)
+TUR,Türkiye,1,expiry_by_2027,EP06725149/EP10169546 Expired 2026-03-20 - MedsPaL confirmed
+ZAF,South Africa,1,expiry_by_2027,ZA200707261 Expired 2026-03-20 - MedsPaL confirmed
+MEX,Mexico,1,expiry_by_2027,MX2007011220 GRANTED to 2027-12-07 per MedsPaL (term adjustment); Tier1 under 'expiry<=2027' definition
+AUS,Australia,1,expiry_by_2027,AU2006224536 expired 2026-03 (no extension - verify)
+NZL,New Zealand,1,expiry_by_2027,family NZ member expired (verify)
+ROU,Romania,1,expiry_by_2027,EP designations WITHDRAWN per MedsPaL; no national validation identified - verify EP Register
+BGR,Bulgaria,1,expiry_by_2027,EP designations WITHDRAWN per MedsPaL; no national validation identified - verify EP Register
+ISR,Israel,1,expiry_by_2027,PENDING - IL184051 PTE status unverified
+NGA,Nigeria,2,never_filed,no patent filing (Levi 150-country group)
+EGY,Egypt,2,never_filed,Not Filed - MedsPaL official record 2026-08-10
+BGD,Bangladesh,2,never_filed,Not Filed - MedsPaL official record 2026-08-10
+USA,United States of America,3,protected,core+PTE to 2031-33
+JPN,Japan,3,protected,JP5209463+PTE
+GBR,United Kingdom,3,protected,EP validation+SPC
+DEU,Germany,3,protected,EP validation+SPC
+GLB,Global,0,global,reference aggregate
