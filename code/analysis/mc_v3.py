@@ -1,29 +1,4 @@
 # -*- coding: utf-8 -*-
-Per draw, shared across countries and transition channels
-  HR non-fatal MI    log-normal 0.72 (0.61-0.85)     HR non-fatal stroke  log-normal 0.93 (0.74-1.15)
-  HR CV death        log-normal 0.85 (0.71-1.01)     HR T2D               log-normal 0.27 (0.24-0.31)
-  IHD fatal first-event share s ~ uniform(0.25, 0.55) (structural assumption)
-  on/off dynamics (engine defaults from Rodriguez et al 2025): stopping probabilities x uniform(0.75, 1.25), restarting
-  probabilities x uniform(0.5, 1.5) (transport across countries and beyond two years), residual effect in the first year
-  off uniform(0, 2/3) for cardiovascular outcomes (central 1/3) and uniform(0, 0.5) for T2D (central 0.25)
-  treatment effects by diabetes status, log-normal from the 95% CIs in HR_MAIN (JACC 2025 Fig S27), drawn independently
-  for people without and with diabetes; T2D incidence HR 0.27 (0.24-0.31) (SELECT)
-  treatment SBP fall ~ normal(3.80, SE from 3.37-4.24) without diabetes and normal(2.13, SE from 1.00-3.27) with diabetes
-  (network meta-analysis by diabetes status, 2025); intention-to-treat estimates used as on-drug effects (no correction)
-  diabetes HR for first IHD log-normal 2.00 (1.83-2.19), for first ischaemic stroke 2.27 (1.95-2.65) (ERFC 2010)
-  dietary effects: averted fractions of each outcome x one factor per draw shared by all countries, sexes and dietary
-  scenarios, from a split log-normal distribution whose 2.5th and 97.5th centiles equal the lower and upper bounds of the
-  GBD 2023 global diet-attributable fraction relative to its point estimate (data/params/diet_paf_uncertainty.csv,
-  build_diet_uncertainty.py); MC_DIET_UNC=old restores the earlier independent normal(1, 0.06) factor per row
-Coverage grid per draw: 0-50% by 2.5%, 60-100% by 10%, and maximum affordable; T2D and CKD modules only at 10%, 20%, 50%
-and maximum affordable.
-Subcommands
-  prepare  --draws 500                       writes <dir>/draws.csv, <dir>/diet/draw<d>.csv, <dir>/jobs.txt
-  worker   --draw d --cov c                   runs the engine, writes <dir>/out/d<d>_c<c>.csv (compact totals); with
-                                              MC_OUT a separate output folder, with MC_KEEP_BYAGE=<folder> also the
-                                              deaths averted by age (<folder>/d<d>_c<c>_byage.csv)
-  aggregate                                   per-draw crossover coverage, medians and 95% UIs -> <dir>/summary_*.csv
-"""
 import argparse, os, subprocess, sys, tempfile
 import numpy as np, pandas as pd
 
