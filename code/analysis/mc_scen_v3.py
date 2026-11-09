@@ -1,14 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Scenario Monte Carlo for lifetable v3, with common random numbers: draws 0..N-1 of the main Monte Carlo
-(data/results/v3/mc/draws.csv and its perturbed dietary files) are reused, so every scenario can be compared with the main
-analysis draw by draw. A scenario fixes the parameters it varies; everything else is sampled as in the main analysis.
-Subcommands
-  prepare  [--draws 300] [--only name,...]   writes <dir>/jobs.txt
-  worker   --scen name --draw d --cov c       writes <dir>/out/<name>/d<d>_c<c>.csv
-  aggregate                                   <dir>/summary_scenarios.csv, <dir>/summary_paired.csv, and the same with
-                                              deaths discounted at 3% a year (<dir>/summary_*_disc3.csv; paired comparison
-                                              with the main analysis only for undiscounted deaths)
-"""
 import argparse, glob, itertools, os, subprocess, sys, tempfile
 import numpy as np, pandas as pd
 
