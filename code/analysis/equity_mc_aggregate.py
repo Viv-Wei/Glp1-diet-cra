@@ -1,5 +1,6 @@
 import glob, os
 import numpy as np, pandas as pd
+
 B = "data/results/v3/equity_mc"
 q = lambda v: pd.Series({"median": np.nanmedian(v), "lo": np.nanpercentile(v, 2.5), "hi": np.nanpercentile(v, 97.5)})
 fs = sorted(glob.glob(f"{B}/alloc/d*/tableS_equity_v3.csv")); print(f"{len(fs)} draws")
