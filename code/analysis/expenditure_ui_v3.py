@@ -1,16 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Expenditure per death averted (Supplementary Table 20) and the equal-budget comparison (Supplementary Table 21,
-Figure 6c) with 95% uncertainty intervals from the 1000 main Monte Carlo draws.
-
-Deaths averted and person-years both come from each draw (data/results/v3/mc/out/d<draw>_c<coverage>.csv, the same
-draws as Supplementary Tables 6 and 7): treatment pays for time on drug only (enrolled at the start of each year times
-the share on drug, which varies with the persistence parameters of the draw), dietary policy costs US$0.55 per adult per
-year (mid-year adult population), over 30 years without discounting. Prices are fixed. Ratios, shares, coverage bought
-and thresholds are computed within each draw and then summarised (median, 2.5th and 97.5th percentiles), so the cost
-threshold equals the treatment-to-diet ratio of expenditure per death averted at 20%.
-Outputs: data/results/v3/expenditure_ui/cost_ui.csv (Table 20), data/results/v3/expenditure_ui/budget_ui.csv (Table 21)
-Usage (repository root): python code/analysis/expenditure_ui_v3.py [--diet-cost 0.55]
-"""
 import argparse, glob, os, re, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, "code")
