@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Monte Carlo for lifetable v3: parameter draws, one engine run per (draw, coverage), and aggregation.
-
 Per draw, shared across countries and transition channels
   HR non-fatal MI    log-normal 0.72 (0.61-0.85)     HR non-fatal stroke  log-normal 0.93 (0.74-1.15)
   HR CV death        log-normal 0.85 (0.71-1.01)     HR T2D               log-normal 0.27 (0.24-0.31)
