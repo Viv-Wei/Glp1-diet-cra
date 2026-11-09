@@ -1,16 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Secondary outcomes (incident T2D cases, CKD deaths) by coverage, with crossover coverage, from the Monte Carlo run
-that recorded both at every coverage level (mc_v3.py with MC_ALL_KEY=1, MC_OUT=data/results/v3/mc_t2dckd/out).
-Same definitions as the main outcome: crossover coverage = coverage of eligible adults at which treatment averts as
-much as the feasible dietary package; where not reached at 100%, the programme size needed relative to enrolling all
-eligible adults (diet / treatment at full coverage), a lower bound.
-
-Outputs (data/results/v3/mc_t2dckd/):
-  outcome_curves.csv              outcome, iso3, cov, diet and treatment medians, ratio median and 95% UI
-  summary_outcome_crossover.csv   outcome, iso3, crossover median and 95% UI (extended), share not reached,
-                                  P(crossover < 10%, < 20%), ratio at 10%, 20% and maximum affordable (median, 95% UI)
-Usage: python code/analysis/outcome_crossover_v3.py [--dir data/results/v3/mc_t2dckd] [--jobs 32]
-"""
 import argparse, glob, os
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np, pandas as pd

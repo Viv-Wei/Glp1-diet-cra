@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Allocation of programme places among eligible people (enrolment at the start of year 1 and annual top-ups)."""
 import numpy as np
 from .settings import SEXES, ST
 

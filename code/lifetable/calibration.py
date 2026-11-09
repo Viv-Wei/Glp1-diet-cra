@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Joint prevalence of IHD and IS, and calibration of baseline hazards to GBD 2023 rates per person-year."""
 import math
 import numpy as np
 from .settings import ST

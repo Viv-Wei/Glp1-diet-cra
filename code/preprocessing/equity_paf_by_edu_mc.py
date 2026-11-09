@@ -1,16 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Low-to-high education ratio of the diet-attributable fraction, with uncertainty (Supplementary Table 14, Figure 6a).
-
-Uses the same method as code/preprocessing/equity_paf_by_edu_v2.py, which gives the education-specific PAFs of Supplementary Table 15:
-education gradients in intake from the Global Dietary Database (stratum mean intake / national mean intake, adults aged
-25 or older) are applied to the GBD 2023 national exposures of each sex, the adjusted exposures are passed through the
-corrected GBD 2023 dose-response curves, and PAFs are averaged over sexes. The central estimate (no sampling) therefore
-equals the ratio of the Table 15 PAFs. Uncertainty: in each draw, national and education-specific GDD intakes are
-sampled from normal distributions matching their 95% uncertainty intervals, and the gradient recomputed; dose-response
-curves are held fixed, so these intervals reflect uncertainty in the education gradient only.
-Output: data/results/v3/equity_paf_ratio_ui.csv (outcome, iso3, central, med, lo, hi)
-Usage (repository root): python code/preprocessing/equity_paf_by_edu_mc.py [--draws 200] [--jobs 32]
-"""
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 from importlib.machinery import SourceFileLoader

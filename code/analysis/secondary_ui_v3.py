@@ -1,18 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Two additions to the supplementary tables, from existing per-draw results (no new model runs).
-
-1. Supplementary Table 8: 95% uncertainty intervals of the combination's multiple of treatment alone for T2D and CKD.
-   Within each of the 1000 main Monte Carlo draws (results/v3/mc/out/d<draw>_c<coverage>.csv, columns t2d and ckd for
-   the combo, diet and glp1 arms), the combination at overlap w is combo - w x (combo - max(diet, glp1)), and the
-   multiple is that divided by treatment alone; medians and 2.5th and 97.5th percentiles are reported. The median
-   equals 1 + the added benefit (%) / 100 already in Table 8, which the script checks.
-2. Supplementary Table 20: expenditure per death averted with costs and deaths discounted at 3% a year, as in the
-   "Discounting 3% a year" scenario (mid-year factors 1.03^-(year - 0.5)). Discounted deaths come from the first 300
-   main-analysis draws of the scenario Monte Carlo (results/v3/mc_scen/out/main/), and discounted expenditure from the
-   yearly programme records of the deterministic grid, at central values.
-Outputs: results/v3/overlap/overlap_ui_t2dckd.csv, results/v3/expenditure_ui/cost_ui_disc3.csv
-Usage (repository root): python code/analysis/secondary_ui_v3.py
-"""
 import glob, os, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, "code")

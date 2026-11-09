@@ -1,13 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Yearly deaths from IHD and ischaemic stroke averted over 30 years, with 95% UIs, for the trajectory figure.
-Same 1000 draws and settings as the main Monte Carlo (mc_v3.py); yearly output instead of 30-year totals.
-Runs: treatment at 10%, 20% and maximum affordable coverage with the feasible dietary package (diet, treatment and
-combined arms), plus the aspirational dietary scenario (diet arm).
-
-  python code/analysis/mc_traj_v3.py prepare            writes data/results/v3/mc_traj/jobs.txt (draw, run)
-  python code/analysis/mc_traj_v3.py worker --draw D --run R
-  python code/analysis/mc_traj_v3.py aggregate          -> data/results/v3/mc_traj/trajectories.csv (iso3, run, arm, year, median, lo, hi)
-"""
 import argparse, os, subprocess, sys, tempfile
 import numpy as np, pandas as pd
 

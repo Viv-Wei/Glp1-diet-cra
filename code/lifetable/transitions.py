@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Hazards by state and the annual competing-risk step.
-
-States N (neither), I (IHD only), S (IS only), B (both). Within a year, the hazards of a state compete; the probability
-of event i is P_i = (1 - exp(-H)) h_i / H. Non-fatal new cases (onset spread evenly through the year) then face the death
-hazards of their new state for half a year. Everyone ages one year per cycle; 95+ does not age further.
-"""
 import math
 import numpy as np
 from .settings import ST

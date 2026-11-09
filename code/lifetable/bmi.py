@@ -1,24 +1,3 @@
-# -*- coding: utf-8 -*-
-"""BMI classes and yearly eligibility (SENS_ELIG_STRUCT=bmi).
-
-Every compartment carries a BMI class, 0 (BMI <25), 1 (25 to <27), 2 (27 to <30) or 3 (>=30), and an enrolment status,
-T (enrolled) or U (not enrolled), so the compartments are T0-T3 and U0-U3 within each sex and cardiovascular state.
-Eligibility is evaluated each year from the cardiovascular state, the BMI class and diabetes (the no-intervention
-natural history, F), so people who develop IHD, IS or diabetes can become eligible.
-
-Rules (SENS_ELIG_RULE):
-  new     tier 1, IHD or IS with BMI >= thr_cvd or diabetes; tier 2, diabetes at any BMI without IHD or IS; tier 3,
-          BMI >= thr_ob without IHD, IS or diabetes
-  legacy  tier 1, IHD or IS with BMI >= thr_cvd; tier 2, diabetes with BMI >= thr_cvd without IHD or IS; tier 3, as
-          above (the rule of the original model, used for checks)
-  thr_cvd is 27 (scenarios 25 and 30, SENS_BMI_CVD) and thr_ob is 30 (scenario 27, SENS_TIER3_BMI).
-
-Sources. BMI among people with IHD or IS (Bayes' rule on the population BMI distribution): relative risks for overweight
-and obesity versus normal weight from Bogers et al, Arch Intern Med 2007 (IHD 1.32, 1.81) and Strazzullo et al, Stroke
-2010 (ischaemic stroke 1.22, 1.64); for east and south Asia from Chen et al, BMJ 2013 (Asia Cohort Consortium, tables 2
-and 3, categories pooled by participants and re-referenced to BMI 18.5-24.9). Diabetes by BMI class: relative risks of
-Yu et al, Int J Obes 2022, as in diabetes.py (overweight for classes 1 and 2, obesity for class 3).
-"""
 import numpy as np
 from .settings import AGES, AGE5, G0, GIDX, SEXES, ST
 

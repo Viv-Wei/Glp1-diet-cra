@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Tests of the direction constraint in the dietary arm's shift towards the TMREL (diet_policy_arm.shifted_exposure).
-Run from the project root: python -m pytest code/lifetable/test_diet_shift.py -q"""
 import os, importlib.util, numpy as np, pandas as pd
 
 def _load():

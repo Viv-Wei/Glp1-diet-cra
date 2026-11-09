@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Monte Carlo convergence: compare medians and 95% UI bounds from the first and second halves of the main draws.
-Reads data/results/v3/mc/out/d<draw>_c<cov>.csv (columns draw, cov, iso3, arm, deaths) at 10%, 20% and maximum affordable
-coverage. Quantities: deaths averted by dietary policy, by treatment at each coverage, and the diet-to-treatment ratio at
-20% coverage. For each country and quantity, the relative difference between halves = |half1 - half2| / full-run value.
-Usage (project root): python code/analysis/convergence_check.py [--mc data/results/v3/mc] [--jobs 32]
-Output: <mc>/convergence_halves.csv, and a summary printed for Supplementary Methods 5."""
 import argparse, glob
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np, pandas as pd

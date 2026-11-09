@@ -1,6 +1,3 @@
-"""Shares of each dietary factor in the country benefit, from the scenario Monte Carlo (data/results/v3/mc_scen/
-single_factor_mc.csv, written by code/analysis/scen_extra.py), in the format read by plot_figure4_country_drivers.py (panel e).
-Output: data/tables/table_single_factor_mc.csv"""
 import pandas as pd
 
 NAMES = dict(pd.read_csv("data/tables/table_single_factor_v3.csv")[["GDD variable code", "Dietary factor"]].drop_duplicates().values)

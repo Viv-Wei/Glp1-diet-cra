@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Treatment persistence among enrolled people: five states ON1 (first year of a course), ON2 (later years on drug),
-OFF1 (first year off, with a residual effect), OFF2 (second year off) and OFF3 (later), tracked separately for enrolled
-people without (nd) and with (d) diabetes, with annual stopping and restarting probabilities from Rodriguez et al (JAMA
-Netw Open 2025). Restarts begin a new course (ON1). The state distribution is tracked for each group as a whole.
-"""
 import numpy as np
 
 PUBLISHED = dict(nd=(0.648, 0.844, 0.363, 0.464), d=(0.465, 0.641, 0.473, 0.573))   # stopped, restarted at 1 and 2 years

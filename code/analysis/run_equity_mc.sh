@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Deaths averted by education group with uncertainty: the 1000 main Monte Carlo draws at 20% coverage, rerun to keep
-# deaths averted by age, then the education allocation (equity_v3.py) applied to each draw. The new runs must reproduce
-# the main Monte Carlo's deaths for the same draws. Usage (project root): nohup bash code/analysis/run_equity_mc.sh [jobs] > run_equity_mc.log 2>&1 &
 set -e; J=${1:-120}; t() { echo "$(date '+%F %T') $*"; }; B=data/results/v3/equity_mc
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 mkdir -p $B/out $B/byage $B/alloc

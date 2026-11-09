@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Tests of the BMI-class structure (code/lifetable/bmi.py).
-
-Run from the project root:  python code/lifetable/test_bmi.py           (unit tests, a few seconds)
-                            python code/lifetable/test_bmi.py --model   (also the full-model equivalence, about 1 minute)
-"""
 import os, subprocess, sys
 import numpy as np
 

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Constants and the settings of one run.
-
-Settings are read from SENS_* environment variables, so that Monte Carlo draws and scenarios can be run by setting
-variables rather than editing code. read_settings() collects them in one place; every value has the default of the main
-analysis. CRA_ROOT sets the project root (default: the current directory).
-"""
 import os
 from types import SimpleNamespace
 import numpy as np

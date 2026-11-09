@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import argparse, glob, os, re, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, "code")

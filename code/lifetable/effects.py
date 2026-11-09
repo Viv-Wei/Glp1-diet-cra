@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Treatment hazard ratios and the risk multipliers of each intervention arm."""
 from .transitions import ramp
 
 

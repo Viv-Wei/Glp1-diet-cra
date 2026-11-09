@@ -1,24 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Trend inputs for the scenario with projected changes in obesity, diabetes and cardiovascular mortality.
-
-Inputs (data/gbd_forecasts/):
-  cvd_forecast_small.csv     GBD 2021 Foresight reference scenario, IHD and ischaemic stroke deaths per 100 000, by
-                             location, sex and age band (15-49, 50-74, 75+), 2015-2050
-  obesity_forecast_small.csv GBD 2021 Adult BMI Collaborators, Lancet 2025: prevalence of overweight (BMI >=25) and
-                             obesity (BMI >=30) by location, sex and five-year age group, 2015-2050
-  diabetes (below)           GBD 2021 Diabetes Collaborators, Lancet 2023, appendix table S23: change in age-standardised
-                             prevalence of diabetes, both sexes, 2021 to 2050
-Outputs (data/params/trends/), by model year t = 1..30 (calendar year 2023 + t; years after 2050 held at 2050):
-  cvd_factor.csv  iso3, sex, a0 (first age of the band: 25, 50, 75), t, f_ihd, f_is: death rate in year t / 2023,
-                  divided by the change due to the band's changing age mix (comp_ihd, comp_is), so that the factors
-                  describe the change at a given age
-  bmi_target.csv  iso3, sex, a0 (five-year group), t, p25, p27, p30: BMI distribution in year t; the 2023 values of
-                  data/params/select_elig.csv scaled by the forecast change in the prevalence of overweight and of obesity,
-                  with p27 placed between p25 and p30 on the logit scale at its 2023 position
-  oth_factor.csv  iso3, sex, a0, t, f_oth: other-cause death rate (all causes minus IHD and IS) in year t / 2023
-  dm_factor.csv   iso3, t, r: age-standardised diabetes prevalence in year t / 2023 (constant annual change between
-                  2021 and 2050; the same in every age group and in both sexes)
-"""
 import os
 import numpy as np, pandas as pd
 

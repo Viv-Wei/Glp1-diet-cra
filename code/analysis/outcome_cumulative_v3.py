@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""30-year totals and the combination with effect overlap, for every outcome, from the all-outcome trajectory run
-(mc_traj_v3.py with MC_TRAJ_OUTCOMES=all; 500 draws; runs at 10%, 20% and maximum affordable coverage and the
-aspirational dietary scenario). Same overlap definition as overlap_v3.py:
-  combination(theta) = combination - theta x (combination - larger single arm), theta = 0, 25, 50, 75, 100%.
-
-Outputs (in --dir):
-  cumulative_by_outcome.csv   outcome, iso3, coverage, arm (diet, glp1, combo, asp), median, lo, hi (30-year totals)
-  overlap_by_outcome.csv      outcome, iso3, coverage, overlap_pct, combined median/lo/hi, added by diet to treatment (%)
-Usage: python code/analysis/outcome_cumulative_v3.py [--dir data/results/v3/mc_traj_t2dckd] [--jobs 32]
-"""
 import argparse, glob
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np, pandas as pd

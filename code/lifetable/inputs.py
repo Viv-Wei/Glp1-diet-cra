@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Input data: GBD 2023 rates and population, the dietary policy file, and helpers for the dietary module."""
 import os
 import pandas as pd
 from .settings import AGE5, SEXES

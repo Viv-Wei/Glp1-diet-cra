@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Per-coverage quantiles of the diet-to-treatment ratio of deaths averted across Monte Carlo draws (for the global 95% UI
-band in Figure 3a). Reads data/results/v3/mc/out/d<draw>_c<cov>.csv (columns draw, cov, iso3, arm, deaths).
-Usage (project root): python code/analysis/mc_curve_quantiles.py [--mc data/results/v3/mc] [--jobs 32]
-Output: <mc>/curve_ratio_quantiles.csv  (iso3, cov, median, lo, hi, t_median, t_lo, t_hi; t = treatment as share of diet)
-"""
 import argparse, glob, os
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np, pandas as pd

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Chronic kidney disease (extended comparison): a separate two-state model (without and with CKD) for the same
-population, with the same ageing and competing risks, calibrated to GBD 2023 CKD incidence and deaths. Dietary policy
-lowers CKD incidence by its PIF; treatment lowers systolic blood pressure (SBP) among people on drug, evaluated on the
-GBD SBP-CKD curve at the SBP after any dietary change, separately for enrolled people without and with diabetes.
-CKD is assumed independent of IHD and IS; treatment has no direct effect on CKD death.
-"""
 import numpy as np
 from .settings import AGES, AGE5, G0, GIDX, SEXES, ARMS
 from .calibration import ckd_calibrate, CKD_PREV_CAP

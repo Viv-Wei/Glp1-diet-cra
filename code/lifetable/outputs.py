@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Result tables (deaths averted by arm, by age group, CKD, T2D) and check tables, and the run summary."""
 import os
 import numpy as np, pandas as pd
 from .settings import AGES, AGE5, GIDX, SEXES, ST, ARMS, KS

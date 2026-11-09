@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Eligibility for treatment (BMI >=27 with IHD, IS or diabetes; BMI >=30 otherwise), the coverage target, and the
-initial split of each state into enrolled (T), untreated eligible (E) and ineligible (O) people."""
 import numpy as np
 from .settings import AGES, AGE5, G0, GIDX, SEXES, ST
 

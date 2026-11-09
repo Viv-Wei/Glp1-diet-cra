@@ -1,20 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Combined dietary policy and GLP-1RA treatment, with overlap of their effects varied from 0% to 100%
-(post hoc on the main Monte Carlo draws; replaces the earlier overlap_sensitivity.py and full-redundancy bound).
-
-Overlap
-  0%    the combination arm as simulated, both interventions acting independently on each person's risk (the life table
-        applies them multiplicatively and accounts for competing risks, so deaths averted are never double counted)
-  theta combination(theta) = combination - theta x (combination - larger single arm)
-  100%  the combination averts only as many deaths as the more effective intervention alone
-Reported by country, coverage of eligible adults (10%, 20%, maximum affordable) and overlap (0, 25, 50, 75, 100%):
-  combined deaths averted; additional deaths averted by adding dietary policy to treatment (% of treatment alone);
-  additional deaths averted by adding treatment to dietary policy (% of dietary policy alone). Medians and 95% UIs.
-
-Inputs  data/results/v3/mc/out/d<draw>_c{0.100,0.200,afford}.csv (columns draw, cov, iso3, arm, deaths, coverage_used)
-Output  data/results/v3/overlap/overlap_by_country.csv (long), overlap_summary.csv (wide, overlap 0/50/100%)
-Usage   python code/analysis/overlap_v3.py [--mc data/results/v3/mc] [--out data/results/v3/overlap] [--jobs 32]
-"""
 import argparse, glob, os
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np, pandas as pd

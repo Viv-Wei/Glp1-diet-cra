@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Tests of the dietary effect on deaths after onset (SENS_DIET_POST, lifetable.effects.make_multipliers).
-Run from the project root: python -m pytest tests/test_diet_post.py -q"""
 import os, sys, importlib
 for p in ("src", "code"):
     if os.path.isdir(os.path.join(p, "lifetable")): sys.path.insert(0, p)

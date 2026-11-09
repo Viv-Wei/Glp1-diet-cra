@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# T2D and CKD for Supplementary Figure 6 (project root): (1) the main Monte Carlo draws recording T2D and CKD at every
-# coverage level, (2) yearly trajectories of all outcomes, (3) summaries. Existing main results are not touched.
-# Usage: nohup bash code/analysis/run_t2d_ckd.sh [parallel jobs, default 120] > logs/t2d_ckd.log 2>&1 &
 set -e
 J=${1:-120}
 source code/pipeline/env_main.sh

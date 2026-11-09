@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Stage 3: Monte Carlo analyses, all with the same 1000 draws (data/results/v3/mc/draws.csv and per-draw dietary files from
-# code/analysis/mc_v3.py prepare). Main analysis over 27 coverage levels, yearly trajectories, education groups, T2D and CKD,
-# 134 scenarios, expenditure, and summaries for the supplementary tables. Usage: bash code/pipeline/run_03_monte_carlo.sh [parallel jobs]
-# Progress: grep "###" logs/run_03.log  (run as: bash code/pipeline/run_03_monte_carlo.sh 120 > logs/run_03.log 2>&1)
 set -e; J=${1:-120}; t() { echo "### $(date '+%F %T') $*"; }
 mkdir -p logs
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1

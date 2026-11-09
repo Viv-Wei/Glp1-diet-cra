@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Diabetes: the T2D overlay (new cases among people without diabetes, by arm) and the diabetes split of first IHD
-and IS incidence.
-
-Each compartment is tracked as people without diabetes under the no-intervention natural history (F) and with
-diabetes (X - F); cardiovascular risk, treatment effects, persistence and priority follow this counterfactual status, so
-diabetes prevented by an intervention does not lower cardiovascular risk. New T2D cases under each arm are counted in a
-separate tracker (G), with risk as without diabetes.
-"""
 import numpy as np
 from .settings import AGES, AGE5, G0, GIDX, SEXES, ST, KS
 

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""30-year projection of one country under the four arms (baseline, treatment, dietary policy, both).
-
-Each year: incidence split by diabetes status (set in the baseline arm), effect retained by enrolled people (five-state
-persistence), new T2D cases, the annual competing-risk step for people without and with diabetes, ageing, entrants
-(open population), stopping and restarting, and the top-up of programme places.
-"""
 import numpy as np
 import os
 from .settings import AGES, AGE5, GIDX, SEXES, ST, ARMS, KS, ELIG_STRUCT

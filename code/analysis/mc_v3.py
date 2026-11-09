@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import argparse, os, subprocess, sys, tempfile
 import numpy as np, pandas as pd
 

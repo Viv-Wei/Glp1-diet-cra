@@ -1,15 +1,3 @@
-"""
-Summaries from the per-draw outputs of the main and scenario Monte Carlo (1000 draws), for the supplementary tables:
-  1. data/results/v3/mc_scen/single_factor_mc.csv   each dietary factor shifted 20% toward its TMREL: IHD and IS deaths
-                                               averted over 30 years and the factor's share of the country benefit,
-                                               computed within each draw (new Supplementary Table 10, Figure 4e)
-  2. data/results/v3/mc_scen/sec_t2d_ckd_mc.csv     T2D cases and CKD deaths averted by each intervention in the secondary
-                                               scenarios, and the diet-to-treatment ratio within each draw (Table 22)
-  3. data/results/v3/expenditure_ui/cost_ui_disc3.csv  expenditure per death averted with costs and deaths discounted at 3%
-                                               a year, person-years from each draw (discounted rows of Table 20)
-  4. data/results/v3/overlap/overlap_ui_t2dckd.csv  combined effect multiples for T2D and CKD (Table 8)
-Medians and 2.5th and 97.5th percentiles. Usage (project root): nice -n 5 python code/analysis/scen_extra.py
-"""
 import glob, os, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, "code")
