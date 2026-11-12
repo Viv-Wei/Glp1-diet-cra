@@ -1,0 +1,241 @@
+Country,GDD variable code,Dietary factor,Total CVD deaths averted (30-year),Share of country CVD benefit (%)
+AUS,v01,Fruits,3497.0,9.6
+BGD,v01,Fruits,66615.0,14.4
+BGR,v01,Fruits,3694.0,11.9
+BRA,v01,Fruits,23981.0,7.9
+CAN,v01,Fruits,3232.0,7.0
+CHN,v01,Fruits,447692.0,13.6
+DEU,v01,Fruits,10672.0,6.7
+EGY,v01,Fruits,16904.0,5.0
+GBR,v01,Fruits,9988.0,9.1
+GLB,v01,Fruits,2164710.0,14.7
+IND,v01,Fruits,1115839.0,36.2
+ISR,v01,Fruits,237.0,4.8
+JPN,v01,Fruits,25043.0,16.1
+MEX,v01,Fruits,20260.0,9.3
+NGA,v01,Fruits,39605.0,29.4
+NZL,v01,Fruits,788.0,9.1
+ROU,v01,Fruits,3967.0,4.9
+TUR,v01,Fruits,1670.0,2.2
+USA,v01,Fruits,50169.0,9.2
+ZAF,v01,Fruits,24362.0,35.3
+AUS,v02,Vegetables,1340.0,3.9
+BGD,v02,Vegetables,52564.0,11.6
+BGR,v02,Vegetables,1101.0,3.6
+BRA,v02,Vegetables,37553.0,13.0
+CAN,v02,Vegetables,2724.0,6.1
+CHN,v02,Vegetables,103.0,0.0
+DEU,v02,Vegetables,6241.0,4.1
+EGY,v02,Vegetables,2866.0,0.9
+GBR,v02,Vegetables,4178.0,4.0
+GLB,v02,Vegetables,523352.0,3.7
+IND,v02,Vegetables,125619.0,4.1
+ISR,v02,Vegetables,94.0,1.9
+JPN,v02,Vegetables,3467.0,2.3
+MEX,v02,Vegetables,15772.0,7.7
+NGA,v02,Vegetables,23791.0,18.1
+NZL,v02,Vegetables,348.0,4.3
+ROU,v02,Vegetables,387.0,0.5
+TUR,v02,Vegetables,23.0,0.0
+USA,v02,Vegetables,21369.0,4.2
+ZAF,v02,Vegetables,11204.0,16.0
+AUS,v05,Legumes,5777.0,15.7
+BGD,v05,Legumes,34182.0,6.8
+BGR,v05,Legumes,4488.0,13.6
+BRA,v05,Legumes,14462.0,4.6
+CAN,v05,Legumes,7299.0,15.7
+CHN,v05,Legumes,479128.0,14.4
+DEU,v05,Legumes,51841.0,31.8
+EGY,v05,Legumes,40759.0,11.9
+GBR,v05,Legumes,18865.0,16.9
+GLB,v05,Legumes,1675708.0,11.1
+IND,v05,Legumes,104337.0,3.1
+ISR,v05,Legumes,1061.0,21.0
+JPN,v05,Legumes,4970.0,3.1
+MEX,v05,Legumes,20905.0,9.5
+NGA,v05,Legumes,20071.0,14.4
+NZL,v05,Legumes,1841.0,20.8
+ROU,v05,Legumes,15903.0,18.0
+TUR,v05,Legumes,5290.0,6.5
+USA,v05,Legumes,128083.0,23.2
+ZAF,v05,Legumes,9796.0,13.6
+AUS,v06,Nuts & seeds,4191.0,11.4
+BGD,v06,Nuts & seeds,103135.0,20.5
+BGR,v06,Nuts & seeds,4740.0,14.3
+BRA,v06,Nuts & seeds,84854.0,26.8
+CAN,v06,Nuts & seeds,4980.0,10.7
+CHN,v06,Nuts & seeds,285237.0,8.6
+DEU,v06,Nuts & seeds,19853.0,12.2
+EGY,v06,Nuts & seeds,182765.0,53.5
+GBR,v06,Nuts & seeds,29012.0,26.1
+GLB,v06,Nuts & seeds,2641151.0,17.5
+IND,v06,Nuts & seeds,676241.0,19.9
+ISR,v06,Nuts & seeds,253.0,5.0
+JPN,v06,Nuts & seeds,31780.0,20.0
+MEX,v06,Nuts & seeds,99168.0,45.0
+NGA,v06,Nuts & seeds,5983.0,4.3
+NZL,v06,Nuts & seeds,998.0,11.3
+ROU,v06,Nuts & seeds,22366.0,25.4
+TUR,v06,Nuts & seeds,9719.0,12.0
+USA,v06,Nuts & seeds,33603.0,6.1
+ZAF,v06,Nuts & seeds,16523.0,22.9
+AUS,v08,Whole grains,14549.0,40.4
+BGD,v08,Whole grains,145446.0,30.6
+BGR,v08,Whole grains,5824.0,18.9
+BRA,v08,Whole grains,86508.0,29.2
+CAN,v08,Whole grains,16778.0,36.0
+CHN,v08,Whole grains,951070.0,29.3
+DEU,v08,Whole grains,41550.0,26.3
+EGY,v08,Whole grains,35526.0,10.6
+GBR,v08,Whole grains,33632.0,31.0
+GLB,v08,Whole grains,4038004.0,27.9
+IND,v08,Whole grains,524061.0,16.3
+ISR,v08,Whole grains,2374.0,48.2
+JPN,v08,Whole grains,53236.0,34.1
+MEX,v08,Whole grains,5293.0,2.4
+NGA,v08,Whole grains,14120.0,10.6
+NZL,v08,Whole grains,3103.0,36.4
+ROU,v08,Whole grains,13516.0,16.8
+TUR,v08,Whole grains,28439.0,36.9
+USA,v08,Whole grains,201678.0,37.7
+ZAF,v08,Whole grains,1502.0,2.1
+AUS,v09,Processed meat,0.0,0.0
+BGD,v09,Processed meat,0.0,0.0
+BGR,v09,Processed meat,0.0,0.0
+BRA,v09,Processed meat,0.0,0.0
+CAN,v09,Processed meat,0.0,0.0
+CHN,v09,Processed meat,0.0,0.0
+DEU,v09,Processed meat,0.0,0.0
+EGY,v09,Processed meat,0.0,0.0
+GBR,v09,Processed meat,0.0,0.0
+GLB,v09,Processed meat,0.0,0.0
+IND,v09,Processed meat,0.0,0.0
+ISR,v09,Processed meat,0.0,0.0
+JPN,v09,Processed meat,0.0,0.0
+MEX,v09,Processed meat,0.0,0.0
+NGA,v09,Processed meat,0.0,0.0
+NZL,v09,Processed meat,0.0,0.0
+ROU,v09,Processed meat,0.0,0.0
+TUR,v09,Processed meat,0.0,0.0
+USA,v09,Processed meat,0.0,0.0
+ZAF,v09,Processed meat,0.0,0.0
+AUS,v10,Red meat,0.0,0.0
+BGD,v10,Red meat,0.0,0.0
+BGR,v10,Red meat,0.0,0.0
+BRA,v10,Red meat,0.0,0.0
+CAN,v10,Red meat,0.0,0.0
+CHN,v10,Red meat,0.0,0.0
+DEU,v10,Red meat,0.0,0.0
+EGY,v10,Red meat,0.0,0.0
+GBR,v10,Red meat,0.0,0.0
+GLB,v10,Red meat,0.0,0.0
+IND,v10,Red meat,0.0,0.0
+ISR,v10,Red meat,0.0,0.0
+JPN,v10,Red meat,0.0,0.0
+MEX,v10,Red meat,0.0,0.0
+NGA,v10,Red meat,0.0,0.0
+NZL,v10,Red meat,0.0,0.0
+ROU,v10,Red meat,0.0,0.0
+TUR,v10,Red meat,0.0,0.0
+USA,v10,Red meat,0.0,0.0
+ZAF,v10,Red meat,0.0,0.0
+AUS,v15,SSB,831.0,2.3
+BGD,v15,SSB,148.0,0.0
+BGR,v15,SSB,434.0,1.3
+BRA,v15,SSB,6098.0,1.9
+CAN,v15,SSB,1415.0,3.0
+CHN,v15,SSB,17873.0,0.5
+DEU,v15,SSB,3872.0,2.4
+EGY,v15,SSB,4585.0,1.3
+GBR,v15,SSB,2292.0,2.1
+GLB,v15,SSB,173726.0,1.2
+IND,v15,SSB,8914.0,0.3
+ISR,v15,SSB,286.0,5.7
+JPN,v15,SSB,1476.0,0.9
+MEX,v15,SSB,15461.0,7.0
+NGA,v15,SSB,547.0,0.4
+NZL,v15,SSB,153.0,1.7
+ROU,v15,SSB,1594.0,1.8
+TUR,v15,SSB,3091.0,3.8
+USA,v15,SSB,28199.0,5.1
+ZAF,v15,SSB,496.0,0.7
+AUS,v29,Omega-6,2824.0,7.7
+BGD,v29,Omega-6,18609.0,3.7
+BGR,v29,Omega-6,473.0,1.4
+BRA,v29,Omega-6,497.0,0.2
+CAN,v29,Omega-6,5226.0,11.2
+CHN,v29,Omega-6,59932.0,1.8
+DEU,v29,Omega-6,6737.0,4.1
+EGY,v29,Omega-6,44323.0,13.0
+GBR,v29,Omega-6,5763.0,5.2
+GLB,v29,Omega-6,764123.0,5.1
+IND,v29,Omega-6,223570.0,6.6
+ISR,v29,Omega-6,307.0,6.1
+JPN,v29,Omega-6,5333.0,3.4
+MEX,v29,Omega-6,19998.0,9.1
+NGA,v29,Omega-6,17534.0,12.6
+NZL,v29,Omega-6,677.0,7.7
+ROU,v29,Omega-6,4029.0,4.6
+TUR,v29,Omega-6,14527.0,17.9
+USA,v29,Omega-6,529.0,0.1
+ZAF,v29,Omega-6,1232.0,1.7
+AUS,v30,Seafood omega-3,316.0,0.9
+BGD,v30,Seafood omega-3,0.0,0.0
+BGR,v30,Seafood omega-3,1891.0,5.7
+BRA,v30,Seafood omega-3,16137.0,5.1
+CAN,v30,Seafood omega-3,797.0,1.7
+CHN,v30,Seafood omega-3,40180.0,1.2
+DEU,v30,Seafood omega-3,5700.0,3.5
+EGY,v30,Seafood omega-3,1285.0,0.4
+GBR,v30,Seafood omega-3,537.0,0.5
+GLB,v30,Seafood omega-3,249384.0,1.7
+IND,v30,Seafood omega-3,195363.0,5.8
+ISR,v30,Seafood omega-3,0.0,0.0
+JPN,v30,Seafood omega-3,0.0,0.0
+MEX,v30,Seafood omega-3,12883.0,5.8
+NGA,v30,Seafood omega-3,14090.0,10.1
+NZL,v30,Seafood omega-3,128.0,1.5
+ROU,v30,Seafood omega-3,4622.0,5.2
+TUR,v30,Seafood omega-3,12384.0,15.3
+USA,v30,Seafood omega-3,26749.0,4.8
+ZAF,v30,Seafood omega-3,4053.0,5.6
+AUS,v34,Fibre,2568.0,7.1
+BGD,v34,Fibre,51108.0,10.7
+BGR,v34,Fibre,1858.0,6.0
+BRA,v34,Fibre,14096.0,4.7
+CAN,v34,Fibre,1329.0,2.9
+CHN,v34,Fibre,87818.0,2.7
+DEU,v34,Fibre,7342.0,4.6
+EGY,v34,Fibre,33.0,0.0
+GBR,v34,Fibre,4338.0,4.0
+GLB,v34,Fibre,630812.0,4.3
+IND,v34,Fibre,116566.0,3.6
+ISR,v34,Fibre,83.0,1.7
+JPN,v34,Fibre,18228.0,11.7
+MEX,v34,Fibre,0.0,0.0
+NGA,v34,Fibre,0.0,0.0
+NZL,v34,Fibre,474.0,5.5
+ROU,v34,Fibre,494.0,0.6
+TUR,v34,Fibre,0.0,0.0
+USA,v34,Fibre,30861.0,5.7
+ZAF,v34,Fibre,1389.0,2.0
+AUS,v37,Sodium,424.0,1.3
+BGD,v37,Sodium,7339.0,1.6
+BGR,v37,Sodium,6993.0,23.2
+BRA,v37,Sodium,19011.0,6.7
+CAN,v37,Sodium,2591.0,5.8
+CHN,v37,Sodium,873391.0,27.9
+DEU,v37,Sodium,6623.0,4.4
+EGY,v37,Sodium,10506.0,3.3
+GBR,v37,Sodium,1250.0,1.2
+GLB,v37,Sodium,1776368.0,12.9
+IND,v37,Sodium,127764.0,4.2
+ISR,v37,Sodium,271.0,5.7
+JPN,v37,Sodium,12658.0,8.4
+MEX,v37,Sodium,8885.0,4.3
+NGA,v37,Sodium,0.0,0.0
+NZL,v37,Sodium,139.0,1.7
+ROU,v37,Sodium,17639.0,22.3
+TUR,v37,Sodium,3931.0,5.3
+USA,v37,Sodium,19710.0,3.9
+ZAF,v37,Sodium,86.0,0.1
