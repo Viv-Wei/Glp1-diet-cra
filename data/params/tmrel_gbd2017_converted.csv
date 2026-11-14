@@ -1,0 +1,20 @@
+risk_factor,exposure_definition,tmrel_low,tmrel_high,unit,gdd_var,note
+Diet low in fruits,fresh/frozen/canned/dried fruit excluding juice and preserved fruit,200.0,300.0,g/day,v01,
+Diet low in vegetables,excluding legumes pickles juice nuts and starchy vegetables,290.0,430.0,g/day,v02,GDD v02 is exactly non-starchy
+Diet low in legumes,fresh/frozen/canned/dried legumes,50.0,70.0,g/day,v05,
+Diet low in whole grains,natural proportion of bran germ and endosperm,100.0,150.0,g/day,v08,China only 9.5 far below the lower bound
+Diet low in nuts and seeds,nuts and seeds,16.0,25.0,g/day,v06,
+Diet low in milk,including skim low-fat and full-fat excluding soy milk,350.0,520.0,g/day,v57,
+Diet high in red meat,beef pork and lamb excluding poultry fish eggs and processed meat,18.0,27.0,g/day,v10,
+Diet high in processed meat,smoked cured or chemically preserved meat,0.0,4.0,g/day,v09,
+Diet high in sugar-sweetened beverages,per 226.8 g containing >=50 kcal excluding 100% juice,0.0,5.0,g/day,v15,China and India only about 4 already within the TMREL
+Diet low in fibre,dietary fibre from all sources,19.0,28.0,g/day,v34,
+Diet low in calcium,calcium from all sources,1.0,1.5,g/day,v36,unit is g note that GDD uses mg
+Diet low in seafood omega-3 fatty acids,EPA and DHA,0.2,0.3,mg/day,v30,
+Diet low in polyunsaturated fatty acids,liquid vegetable oils mainly omega-6,0.09,0.13,% of total energy,v29,redefined in GBD 2017 as being replaced by saturated fat or carbohydrate
+Diet high in trans fatty acids,trans fat from all sources,0.0,1.0,% of total energy,,GDD has no such variable
+Diet high in sodium,!! 24-hour urinary sodium !! not a dietary intake,1.0,5.0,g/day,v37,!! measurement method differs from GDD see the note below
+High systolic blood pressure,systolic blood pressure,110.0,115.0,mmHg,,mediator variable
+High body-mass index,body mass index,20.0,25.0,kg/m2,,mediator variable
+High fasting plasma glucose,fasting plasma glucose,4.8,5.4,mmol/L,,mediator variable
+High LDL cholesterol,low-density lipoprotein,0.7,1.3,mmol/L,,mediator variable
