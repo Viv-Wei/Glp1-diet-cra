@@ -1,0 +1,9 @@
+group,quantity,published,model,diff
+without T2D,discontinued_1y,0.648,0.648,0.0
+without T2D,discontinued_2y,0.844,0.844064,6.4000000000064e-05
+without T2D,reinitiated_1y,0.363,0.363,0.0
+without T2D,reinitiated_2y,0.464,0.464283,0.0002829999999999777
+with T2D,discontinued_1y,0.465,0.465,0.0
+with T2D,discontinued_2y,0.641,0.6410150000000001,1.5000000000098268e-05
+with T2D,reinitiated_1y,0.473,0.473,0.0
+with T2D,reinitiated_2y,0.573,0.5731299999999999,0.00012999999999996348
